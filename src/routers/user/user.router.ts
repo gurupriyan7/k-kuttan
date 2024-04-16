@@ -29,7 +29,7 @@ const router = Router();
 router.post("/", JoiValidator(signupSchema), userSignUp);
 router.post("/login", JoiValidator(loginSchema), userSignIn);
 
-//admin-endpoints
+// admin-endpoints
 router.get("/admin", getAllAdmins);
 router.post(
   "/admin",

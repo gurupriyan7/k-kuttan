@@ -1,11 +1,17 @@
 import { Schema, model } from "mongoose";
-import { UserRole, UserStatus } from "./user.enum.js";
+import { UserApprovalStatus, UserRole, UserStatus } from "./user.enum.js";
+import { ObjectId } from "../../constants/type.js";
 
 const UserSchema = new Schema(
   {
-    name: {
+    firstName: {
       type: String,
-      required: true,
+    },
+    lastName: {
+      type: String,
+    },
+    userName: {
+      type: String,
     },
     email: {
       type: String,
@@ -18,12 +24,12 @@ const UserSchema = new Schema(
       enum: UserRole,
       default: UserRole.USER,
     },
-    // phoneNumber: {
-    //   type: String,
-    //   unique: true,
-    //   sparse: true,
-    //   trim: true,
-    // },
+    phoneNumber: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
     password: {
       type: String,
       minlength: 6,
@@ -33,18 +39,32 @@ const UserSchema = new Schema(
       enum: UserStatus,
       default: UserStatus.ACTIVE,
     },
-    org: {
+    approvalStatus: {
+      type: String,
+      enum: UserApprovalStatus,
+      default: UserApprovalStatus.PENDING,
+    },
+    savedPosts: {
+      type: [ObjectId],
+    },
+    following: {
+      type: [ObjectId],
+      ref: "users",
+    },
+    followingAuthors: {
+      type: [ObjectId],
+      ref: "users",
+    },
+    profileImage: {
       type: String,
     },
-    position: {
+    coverImage: {
       type: String,
     },
-    industry: {
-      type: String,
+    Groups: {
+      type: [ObjectId],
     },
-    country: {
-      type: String,
-    },
+
     resetId: {
       type: String,
     },
@@ -56,6 +76,13 @@ const UserSchema = new Schema(
   { timestamps: true },
 );
 
-const User = model("user", UserSchema);
+UserSchema.pre("save", function (next) {
+  if (this.role === UserRole.USER) {
+    this.status = UserStatus.ACTIVE;
+  }
+  next();
+});
+
+const User = model("users", UserSchema);
 
 export default User;

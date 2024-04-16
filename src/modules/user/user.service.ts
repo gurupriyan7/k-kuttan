@@ -21,8 +21,17 @@ import { sendEmail } from "../../utils/sendMail.js";
 const userSignUp = async (
   userData: UserSignUpData,
 ): Promise<(UserDocument & { token: string }) | any> => {
-  const { name, email, password, country, industry, position, org, role } =
-    userData;
+  const {
+    firstName,
+    lastName,
+    userName,
+    password,
+    email,
+    role,
+    phoneNumber,
+    profileImage,
+    coverImage,
+  } = userData;
 
   const userExists = await User.findOne({
     email,
@@ -39,28 +48,31 @@ const userSignUp = async (
   const hashedPassword = await hashValue(password, 10);
 
   const user = await User.create({
-    name,
+    firstName,
+    lastName,
     email,
-    role: UserRole.USER,
-    ...(industry != null && {
-      industry,
+    role,
+    userName,
+    phoneNumber,
+    profileImage,
+    coverImage,
+    ...(profileImage != null && {
+      profileImage,
     }),
-    ...(country != null && {
-      country,
+    ...(coverImage != null && {
+      coverImage,
     }),
-    ...(position != null && {
-      position,
-    }),
-    org,
     password: hashedPassword,
-    status: UserStatus.ACTIVE,
   });
 
   return {
-    name: user?.name,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    userName: user?.userName,
     email: user?.email,
     role: user?.role,
     status: user?.status,
+    profileImage: user?.profileImage,
     token: await generateToken({
       id: String(user?._id),
     }),
@@ -94,19 +106,18 @@ const userSignIn = async (
   if (!comparePassword) {
     return await generateAPIError(errorMessages.invalidCredentials, 404); // changed from 401 to 404 to fix frontend issue with redirect to login page
   }
+
   return {
-    token: await generateToken({ id: user?._id }),
-    ...{
-      name: user?.name,
-      email: user?.email,
-      role: user?.role,
-      status: user?.status,
-      org: user?.org,
-      position: user?.position,
-      country: user?.countDocuments,
-      industry: user?.industry,
-      isDeleted: user?.isDeleted,
-    },
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    userName: user?.userName,
+    email: user?.email,
+    role: user?.role,
+    status: user?.status,
+    profileImage: user?.profileImage,
+    token: await generateToken({
+      id: String(user?._id),
+    }),
   };
 };
 const adminSignIn = async (
@@ -234,7 +245,10 @@ const forgotPassword = async (email: string): Promise<any> => {
 
   const obj: sendMailData = {
     to: user?.email,
-    text: await resetLinkEmailTemplate({ username: user?.name, uuId }),
+    text: await resetLinkEmailTemplate({
+      username: user?.userName ?? "",
+      uuId,
+    }),
     subject: "Grand thornton",
   };
 

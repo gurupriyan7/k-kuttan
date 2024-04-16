@@ -19,20 +19,23 @@ export const signupSchema = joi.object({
         "Password must contain atleast one uppercase letter, one lowercase letter, one number and one special character",
       "any.required": "Password is a required field",
     }),
-  name: joi.string().required().messages({
-    "string.required": "Name is a required field",
+  firstName: joi.string().required().messages({
+    "string.required": "FirstName is a required field",
   }),
-  industry: joi.string().required().messages({
-    "any.required": "Industry is a required field",
+  lastName: joi.string().required().messages({
+    "string.required": "lastName is a required field",
   }),
-  position: joi.string().required().messages({
-    "any.required": "Position is a required field",
+  userName: joi.string().required().messages({
+    "string.required": "UserName is a required field",
   }),
-  org: joi.string().required().messages({
-    "any.required": "Org is a required field",
+  phoneNumber: joi.string().required().messages({
+    "string.required": "PhoneNumber is a required field",
   }),
-  country: joi.string().required().messages({
-    "any.required": "Country is a required field",
+  profileImage: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+  coverImage: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
   }),
 });
 

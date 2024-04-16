@@ -3,13 +3,14 @@ import User from "./user.model.js";
 
 export interface UserSignUpData {
   email: string;
-  name: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  profileImage: string;
+  coverImage: string;
   password: string;
-  industry: string;
-  position: string;
-  org: string;
   role: string;
-  country: string;
 }
 
 export interface UserLoginData {

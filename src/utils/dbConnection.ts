@@ -4,7 +4,7 @@ import { appConfig } from "../config/appConfig.js";
 
 const connect = async (): Promise<any> => {
   await mongoose
-    .connect(appConfig.mongoUrl)
+    .connect(String(appConfig.mongoUrl))
     .then(() => {
       console.log("Connected to db");
     })

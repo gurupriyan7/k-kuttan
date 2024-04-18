@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
 import {
-  // adminSignIn,
   userSignIn,
   userSignUp,
-  addAdmin,
   updateAdmin,
-  getAllAdmins,
   forgotPassword,
   updatePassword,
+  adminSignIn,
+  authorSignIn,
+  authorSignUp,
+  updateUser,
 } from "../../modules/user/user.controller.js";
 import JoiValidator from "../../middleware/joi.middleware.js";
 import {
-  adminSignUpSchema,
   forGotPasswordLinkSchema,
   loginSchema,
   resetPasswordSchema,
   signupSchema,
   updateAdminSchema,
+  updateUserSchema,
 } from "../../modules/user/user.joi.js";
 
 import { protect } from "../../middleware/auth.middleware.js";
@@ -28,16 +29,16 @@ const router = Router();
 // user-endpoints
 router.post("/", JoiValidator(signupSchema), userSignUp);
 router.post("/login", JoiValidator(loginSchema), userSignIn);
-
-// admin-endpoints
-router.get("/admin", getAllAdmins);
-router.post(
-  "/admin",
-  JoiValidator(adminSignUpSchema),
-  protect([UserRole.ADMIN]),
-  addAdmin,
+router.post("/admin/login", JoiValidator(loginSchema), adminSignIn);
+router.post("/author", JoiValidator(signupSchema), authorSignUp);
+router.post("/author/login", JoiValidator(loginSchema), authorSignIn);
+router.patch(
+  "/",
+  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  JoiValidator(updateUserSchema),
+  updateUser,
 );
-// router.post("/admin/login", JoiValidator(loginSchema), adminSignIn);
+
 router.post(
   "/forgot-password",
   JoiValidator(forGotPasswordLinkSchema),

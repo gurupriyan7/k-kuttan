@@ -28,6 +28,7 @@ const userSignIn = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const data = await userService.userSignIn({
       ...req.body,
+      role: UserRole.USER,
     });
 
     return responseUtils.success(res, {
@@ -36,11 +37,12 @@ const userSignIn = errorWrapper(
     });
   },
 );
-const addAdmin = errorWrapper(
-  async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const data = await userService.addAdmin({
+
+const authorSignUp = errorWrapper(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await userService.userSignUp({
       ...req.body,
-      role: req?.user?.role,
+      role: UserRole.AUTHOR,
     });
 
     return responseUtils.success(res, {
@@ -49,9 +51,23 @@ const addAdmin = errorWrapper(
     });
   },
 );
+
+const authorSignIn = errorWrapper(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await userService.userSignIn({
+      ...req.body,
+      role: UserRole.AUTHOR,
+    });
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
 const adminSignIn = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await userService.adminSignIn({
+    const data = await userService.userSignIn({
       ...req.body,
       role: UserRole.ADMIN,
     });
@@ -141,8 +157,9 @@ const updatePassword = errorWrapper(
 export {
   userSignUp,
   userSignIn,
-  addAdmin,
   adminSignIn,
+  authorSignUp,
+  authorSignIn,
   updateUser,
   updateAdmin,
   getAllAdmins,

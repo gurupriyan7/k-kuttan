@@ -7,9 +7,9 @@ import { hashValue } from "./user.utils.js";
 import { UserRole, UserStatus } from "./user.enum.js";
 import { generateToken } from "../../utils/auth.utils.js";
 import {
-  AdminData,
   GetAllAdminsData,
   UpdatePasswordData,
+  UpdateUserData,
   UserLoginData,
   UserSignUpData,
 } from "./user.interface.js";
@@ -82,11 +82,12 @@ const userSignUp = async (
 const userSignIn = async (
   userData: UserLoginData,
 ): Promise<(UserDocument & { token: string }) | any> => {
-  const { email, password } = userData;
+  const { email, password, role } = userData;
 
   const user: any = await User.findOne({
     email,
     isDeleted: false,
+    role,
   });
 
   if (user == null) {
@@ -151,7 +152,8 @@ const adminSignIn = async (
   return {
     token: await generateToken({ id: user?._id }),
     ...{
-      name: user?.name,
+      firstName: user?.firstName,
+      lastName: user?.lastName,
       email: user?.email,
       role: user?.role,
       status: user?.status,
@@ -159,40 +161,72 @@ const adminSignIn = async (
   };
 };
 
-const addAdmin = async (adminData: AdminData): Promise<any> => {
-  const { email, password, name, role } = adminData;
-
-  const adminExists = await User.findOne({
-    email,
-    role: role ?? UserRole.ADMIN,
-    isDeleted: false,
-  });
-
-  if (adminExists != null) {
-    return await generateAPIError(errorMessages.userExists, 400);
-  }
-
-  const hashedPassword = await hashValue(password, 10);
-
-  return await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    role: UserRole.ADMIN,
-  });
-};
-
 const updateUser = async (
   userId: string,
-  userData: Partial<UserSignUpData>,
+  userData: UpdateUserData,
 ): Promise<any> => {
+  const user: any = await User.findOne({
+    _id: new ObjectId(userId),
+    isDeleted: false,
+    role: UserRole.USER,
+  });
+  if (user == null) {
+    return await generateAPIError(errorMessages.userNotFound, 404);
+  }
+
+  const {
+    // password,
+    firstName,
+    lastName,
+    userName,
+    phoneNumber,
+    profileImage,
+    coverImage,
+    // savedPost,
+    // follower,
+    // followerAuthor,
+    following,
+  } = userData;
+  let followings: any;
+  if (following != null) {
+    if (user?.followings?.includes(String(following))) {
+      followings = {
+        $pull: { followings: following },
+      };
+    } else {
+      followings = {
+        $push: { followings: following },
+      };
+    }
+  }
+
   return await User.findOneAndUpdate(
     {
       _id: new ObjectId(userId),
       isDeleted: false,
     },
     {
-      ...userData,
+      ...(firstName != null && {
+        firstName,
+      }),
+      ...(lastName != null && {
+        lastName,
+      }),
+      ...(userName != null && {
+        userName,
+      }),
+      ...(phoneNumber != null && {
+        phoneNumber,
+      }),
+      ...(profileImage != null && {
+        profileImage,
+      }),
+      ...(coverImage != null && {
+        coverImage,
+      }),
+      ...(following != null && {
+        ...followings,
+      }),
     },
   );
 };
@@ -291,7 +325,6 @@ const updatePassword = async ({
 export const userService = {
   userSignUp,
   userSignIn,
-  addAdmin,
   adminSignIn,
   updateUser,
   updateAdmin,

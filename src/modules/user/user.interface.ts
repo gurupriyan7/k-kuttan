@@ -12,6 +12,20 @@ export interface UserSignUpData {
   password: string;
   role: string;
 }
+export interface UpdateUserData {
+  userName?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  profileImage?: string;
+  coverImage?: string;
+  password?: string;
+  role?: string;
+  following?: string;
+  followerAuthor?: string;
+  follower?: string;
+  savedPost?: string;
+}
 
 export interface UserLoginData {
   email: string;

@@ -26,7 +26,6 @@ const UserSchema = new Schema(
     },
     phoneNumber: {
       type: String,
-      unique: true,
       sparse: true,
       trim: true,
     },
@@ -47,10 +46,15 @@ const UserSchema = new Schema(
     savedPosts: {
       type: [ObjectId],
     },
-    following: {
+    followings: {
       type: [ObjectId],
       ref: "users",
     },
+    followers: {
+      type: [ObjectId],
+      ref: "users",
+    },
+
     followingAuthors: {
       type: [ObjectId],
       ref: "users",

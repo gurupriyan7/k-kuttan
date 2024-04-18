@@ -38,6 +38,51 @@ export const signupSchema = joi.object({
     "string.base": "Profile image must be a string",
   }),
 });
+export const updateUserSchema = joi.object({
+  password: joi
+    .string()
+    .min(8)
+    .pattern(
+      new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"),
+    )
+    .optional()
+    .messages({
+      "string.min": "Password must be at least 8 characters long",
+      "string.pattern.base":
+        "Password must contain atleast one uppercase letter, one lowercase letter, one number and one special character",
+      "any.required": "Password must be a string",
+    }),
+  firstName: joi.string().optional().messages({
+    "string.required": "FirstName must be a string",
+  }),
+  lastName: joi.string().optional().messages({
+    "string.required": "lastName must be a string",
+  }),
+  userName: joi.string().optional().messages({
+    "string.required": "UserName must be a string",
+  }),
+  phoneNumber: joi.string().optional().messages({
+    "string.required": "PhoneNumber must be a string",
+  }),
+  profileImage: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+  coverImage: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+  savedPost: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+  following: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+  followingAuthor: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+  follower: joi.string().optional().messages({
+    "string.base": "Profile image must be a string",
+  }),
+});
 
 export const loginSchema = joi.object({
   email: joi.string().email().required().messages({

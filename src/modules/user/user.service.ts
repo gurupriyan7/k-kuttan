@@ -7,7 +7,7 @@ import { hashValue } from "./user.utils.js";
 import { UserRole, UserStatus } from "./user.enum.js";
 import { generateToken } from "../../utils/auth.utils.js";
 import {
-  GetAllAdminsData,
+  // GetAllAdminsData,
   UpdatePasswordData,
   UpdateUserData,
   UserLoginData,
@@ -182,23 +182,50 @@ const updateUser = async (
     phoneNumber,
     profileImage,
     coverImage,
-    // savedPost,
+    savedPost,
     // follower,
     // followerAuthor,
     following,
   } = userData;
   let followings: any;
+  let savedPosts: any;
+  let followers: any;
   if (following != null) {
     if (user?.followings?.includes(String(following))) {
       followings = {
         $pull: { followings: following },
       };
+      followers = {
+        $pull: { followers: userId },
+      };
     } else {
       followings = {
         $push: { followings: following },
       };
+      followers = {
+        $push: { followers: userId },
+      };
     }
   }
+  if (savedPost != null) {
+    if (user?.savedPosts?.includes(String(savedPost))) {
+      savedPosts = {
+        $pull: { savedPosts: savedPost },
+      };
+    } else {
+      savedPosts = {
+        $push: { savedPosts: savedPost },
+      };
+    }
+  }
+  await User.findOneAndUpdate(
+    { _id: new ObjectId(following) },
+    {
+      ...(following != null && {
+        ...followers,
+      }),
+    },
+  );
 
   return await User.findOneAndUpdate(
     {
@@ -227,37 +254,11 @@ const updateUser = async (
       ...(following != null && {
         ...followings,
       }),
-    },
-  );
-};
-const updateAdmin = async (adminId: string, status: string): Promise<any> => {
-  return await User.findOneAndUpdate(
-    {
-      _id: new ObjectId(adminId),
-      isDeleted: false,
-    },
-    {
-      // eslint-disable-next-line
-      ...(status && {
-        status,
+      ...(savedPost != null && {
+        ...savedPosts,
       }),
     },
-    {
-      new: true,
-    },
-  ).select("-password");
-};
-
-const getAllAdmins = async ({
-  query = {},
-  options,
-}: GetAllAdminsData): Promise<{ data: UserDocument[]; totalCount: number }> => {
-  const [data, totalCount] = await Promise.all([
-    User.find(query, {}, options),
-    User.countDocuments(query),
-  ]);
-
-  return { data, totalCount };
+  );
 };
 
 const forgotPassword = async (email: string): Promise<any> => {
@@ -283,13 +284,13 @@ const forgotPassword = async (email: string): Promise<any> => {
       username: user?.userName ?? "",
       uuId,
     }),
-    subject: "Grand thornton",
+    subject: "k-kuttan",
   };
 
   const sendMail = await sendEmail(obj);
 
   if (!sendMail) {
-    await User.deleteOne({ email });
+    // await User.deleteOne({ email })
     return await generateAPIError(errorMessages.emailSendFailed, 400);
   }
 
@@ -327,8 +328,6 @@ export const userService = {
   userSignIn,
   adminSignIn,
   updateUser,
-  updateAdmin,
-  getAllAdmins,
   forgotPassword,
   updatePassword,
 };

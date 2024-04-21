@@ -5,10 +5,10 @@ import { errorWrapper } from "../../middleware/errorWrapper.js";
 import { userService } from "./user.service.js";
 import { UserRole } from "./user.enum.js";
 import { RequestWithUser } from "../../interface/app.interface.js";
-import { FilterQuery } from "mongoose";
-import User from "./user.model.js";
+// import { FilterQuery } from 'mongoose'
+// import User from './user.model.js'
 // import { ObjectId } from '../../constants/type.js'
-import { getPaginationOptions } from "../../utils/pagination.utils.js";
+// import { getPaginationOptions } from '../../utils/pagination.utils.js'
 
 const userSignUp = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -92,47 +92,6 @@ const updateUser = errorWrapper(
   },
 );
 
-const updateAdmin = errorWrapper(
-  async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const data = await userService.updateAdmin(
-      req.params?.id,
-      req.body?.status,
-    );
-
-    return responseUtils.success(res, {
-      data,
-      status: 200,
-    });
-  },
-);
-const getAllAdmins = errorWrapper(
-  async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const query: FilterQuery<typeof User> = {
-      isDeleted: false,
-      role: UserRole.ADMIN,
-    };
-
-    const paginationOptions = getPaginationOptions({
-      limit: req.query?.limit,
-      page: req.query?.page,
-    });
-
-    const data = await userService.getAllAdmins({
-      query,
-      options: {
-        ...paginationOptions,
-        sort: { createdAt: 1 },
-        select: "-password",
-      },
-    });
-
-    return responseUtils.success(res, {
-      data,
-      status: 200,
-    });
-  },
-);
-
 const forgotPassword = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const data = await userService.forgotPassword(req.body.email);
@@ -161,8 +120,6 @@ export {
   authorSignUp,
   authorSignIn,
   updateUser,
-  updateAdmin,
-  getAllAdmins,
   forgotPassword,
   updatePassword,
 };

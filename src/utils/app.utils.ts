@@ -58,7 +58,7 @@ line-height: normal;
 .link {
 padding: 15px 24px;
 border-radius: 8px;
-background: var(--Primary, #18399A);
+background: var(--Primary, #99730a);
 box-shadow: 0px 4px 10px 0px #DDBAFF;
 color: #FFF;
 font-family: Trip Sans;
@@ -91,10 +91,10 @@ Reset Password
 </a>
 <pre>
 If you didn't request a password reset, please ignore this email or contact our support team if you have any concerns.<br/>
-You can reach us at connect@gt.com<br><br/>
+You can reach us at connect@kambikuttappan.com<br><br/>
 
 Thank you,
-Grand Thoronton
+Kambi Kuttappan
 </pre>
 </div>
 </body>

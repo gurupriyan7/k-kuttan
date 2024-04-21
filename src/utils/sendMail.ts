@@ -3,6 +3,8 @@ import { sendMailData } from "../interface/app.interface.js";
 import { appConfig } from "../config/appConfig.js";
 
 export const sendEmail = async (mailData: sendMailData): Promise<boolean> => {
+  console.log(appConfig.sibKey, "sibkey", appConfig.sibSource);
+
   try {
     const headers = {
       accept: "application/json",
@@ -31,8 +33,8 @@ export const sendEmail = async (mailData: sendMailData): Promise<boolean> => {
     );
 
     return true;
-  } catch (err) {
-    console.log(err, "error");
+  } catch (err: any) {
+    console.log(err?.message, "errorsfsffsfgf");
     return false;
   }
 };

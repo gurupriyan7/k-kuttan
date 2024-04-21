@@ -3,7 +3,6 @@ import { Router } from "express";
 import {
   userSignIn,
   userSignUp,
-  updateAdmin,
   forgotPassword,
   updatePassword,
   adminSignIn,
@@ -17,7 +16,6 @@ import {
   loginSchema,
   resetPasswordSchema,
   signupSchema,
-  updateAdminSchema,
   updateUserSchema,
 } from "../../modules/user/user.joi.js";
 
@@ -48,13 +46,6 @@ router.post(
   "/reset-password",
   JoiValidator(resetPasswordSchema),
   updatePassword,
-);
-
-router.patch(
-  "/admin/:id",
-  protect([UserRole.ADMIN]),
-  JoiValidator(updateAdminSchema),
-  updateAdmin,
 );
 
 export default router;

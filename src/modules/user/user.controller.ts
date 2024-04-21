@@ -91,6 +91,16 @@ const updateUser = errorWrapper(
     });
   },
 );
+const updateUserByAdmin = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const data = await userService.updateUserByAdmin(req?.params?.id);
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
 
 const forgotPassword = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -122,4 +132,5 @@ export {
   updateUser,
   forgotPassword,
   updatePassword,
+  updateUserByAdmin,
 };

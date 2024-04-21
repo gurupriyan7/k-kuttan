@@ -4,7 +4,7 @@ import User from "./user.model.js";
 import { generateAPIError } from "../../errors/apiError.js";
 import { errorMessages, successMessages } from "../../constants/messages.js";
 import { hashValue } from "./user.utils.js";
-import { UserRole, UserStatus } from "./user.enum.js";
+import { UserApprovalStatus, UserRole, UserStatus } from "./user.enum.js";
 import { generateToken } from "../../utils/auth.utils.js";
 import {
   // GetAllAdminsData,
@@ -84,11 +84,20 @@ const userSignIn = async (
 ): Promise<(UserDocument & { token: string }) | any> => {
   const { email, password, role } = userData;
 
+  const isAuthor = role === UserRole.AUTHOR;
+
   const user: any = await User.findOne({
     email,
     isDeleted: false,
     role,
+    ...(isAuthor && {
+      approvalStatus: UserApprovalStatus.APPROVED,
+    }),
   });
+
+  // if(isAuthor&& user?.approvalStatus!==UserApprovalStatus.APPROVED){
+
+  // }
 
   if (user == null) {
     return await generateAPIError(errorMessages.userNotFound, 404);
@@ -323,6 +332,17 @@ const updatePassword = async ({
   }
 };
 
+const updateUserByAdmin = async (userId: string): Promise<any> => {
+  return await User.findOneAndUpdate(
+    {
+      _id: new ObjectId(userId),
+      isDeleted: false,
+      role: { $ne: UserRole.ADMIN },
+    },
+    { new: true }, // This option returns the modified document rather than the original
+  ).populate("-password");
+};
+
 export const userService = {
   userSignUp,
   userSignIn,
@@ -330,4 +350,5 @@ export const userService = {
   updateUser,
   forgotPassword,
   updatePassword,
+  updateUserByAdmin,
 };

@@ -36,6 +36,7 @@ router.patch(
   JoiValidator(updateUserSchema),
   updateUser,
 );
+router.patch("/:id", protect([UserRole.ADMIN]), updateUser);
 
 router.post(
   "/forgot-password",

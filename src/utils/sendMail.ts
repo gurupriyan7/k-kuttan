@@ -34,7 +34,7 @@ export const sendEmail = async (mailData: sendMailData): Promise<boolean> => {
 
     return true;
   } catch (err: any) {
-    console.log(err?.message, "errorsfsffsfgf");
+    console.log(err, "error");
     return false;
   }
 };

@@ -195,10 +195,13 @@ const updateUser = async (
     // follower,
     // followerAuthor,
     following,
+    password,
+    newPassword,
   } = userData;
   let followings: any;
   let savedPosts: any;
   let followers: any;
+  let hashedPassword;
   if (following != null) {
     if (user?.followings?.includes(String(following))) {
       followings = {
@@ -216,6 +219,17 @@ const updateUser = async (
       };
     }
   }
+
+  if (password != null && newPassword != null) {
+    const comparePassword = await bcrypt.compare(password, user.password ?? "");
+
+    if (!comparePassword) {
+      return await generateAPIError(errorMessages.passwordNotMatch, 400);
+    }
+
+    hashedPassword = await hashValue(newPassword, 10);
+  }
+
   if (savedPost != null) {
     if (user?.savedPosts?.includes(String(savedPost))) {
       savedPosts = {
@@ -266,6 +280,10 @@ const updateUser = async (
       ...(savedPost != null && {
         ...savedPosts,
       }),
+      ...(password != null &&
+        newPassword != null && {
+          password: hashedPassword,
+        }),
     },
   );
 };

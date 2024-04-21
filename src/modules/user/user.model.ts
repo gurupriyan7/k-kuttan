@@ -45,6 +45,7 @@ const UserSchema = new Schema(
     },
     savedPosts: {
       type: [ObjectId],
+      ref: "posts",
     },
     followings: {
       type: [ObjectId],

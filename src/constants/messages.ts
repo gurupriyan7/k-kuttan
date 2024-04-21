@@ -8,7 +8,8 @@ const errorMessages = {
   emailSendFailed: "Email send failed",
   linkExpired: "The link you are trying to access has expired",
   categoryNotFound: "Category not found with id",
-  areaNotFound: "Area not found with id",
+  postNotFount: "Post not found by Id",
+  passwordNotMatch: "Old password not match",
 };
 
 const successMessages = {

@@ -25,6 +25,7 @@ export interface UpdateUserData {
   followerAuthor?: string;
   follower?: string;
   savedPost?: string;
+  newPassword?: string;
 }
 
 export interface UserLoginData {

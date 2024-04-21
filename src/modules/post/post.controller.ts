@@ -27,11 +27,35 @@ const getAllPostsByUser = errorWrapper(
       limit: req.query?.limit,
       page: req.query?.page,
     });
+    let query: FilterQuery<typeof Post> = {
+      createdBy: new ObjectId(req.user?._id),
+      isDeleted: false,
+    };
+
+    const searchTerm = req.query?.searchTerm;
+    if (searchTerm) {
+      query = {
+        ...query,
+        $or: [
+          {
+            summary: {
+              $regex: new RegExp(String(searchTerm)),
+              $options: "i",
+            },
+          },
+          {
+            title: { $regex: new RegExp(String(searchTerm)), $options: "i" },
+          },
+          {
+            story: { $regex: new RegExp(String(searchTerm)), $options: "i" },
+          },
+        ],
+      };
+    }
 
     const data = await postService.getAllPostsByUser({
       query: {
-        createdBy: new ObjectId(req.user?._id),
-        isDeleted: false,
+        ...query,
         ...(req.query?.isDraft && {
           isDraft: req?.query?.isDraft,
         }),

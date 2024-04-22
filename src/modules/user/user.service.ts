@@ -17,6 +17,7 @@ import { ObjectId } from "../../constants/type.js";
 import { getUuid, resetLinkEmailTemplate } from "../../utils/app.utils.js";
 import { sendMailData } from "../../interface/app.interface.js";
 import { sendEmail } from "../../utils/sendMail.js";
+import Post from "../../modules/post/post.model.js";
 
 const userSignUp = async (
   userData: UserSignUpData,
@@ -117,6 +118,10 @@ const userSignIn = async (
     return await generateAPIError(errorMessages.invalidCredentials, 404); // changed from 401 to 404 to fix frontend issue with redirect to login page
   }
 
+  const postCount = await Post.countDocuments({
+    createdBy: new ObjectId(user?._id),
+  });
+
   return {
     firstName: user?.firstName,
     lastName: user?.lastName,
@@ -124,7 +129,11 @@ const userSignIn = async (
     email: user?.email,
     role: user?.role,
     status: user?.status,
+    coverImage: user?.coverImage,
     profileImage: user?.profileImage,
+    followers: user?.followers?.length ?? 0,
+    followings: user?.followings?.length ?? 0,
+    posts: postCount ?? 0,
     token: await generateToken({
       id: String(user?._id),
     }),
@@ -158,6 +167,10 @@ const adminSignIn = async (
   if (!comparePassword) {
     return await generateAPIError(errorMessages.invalidCredentials, 401);
   }
+
+  const postCount = await Post.countDocuments({
+    createdBy: new ObjectId(user?._id),
+  });
   return {
     token: await generateToken({ id: user?._id }),
     ...{
@@ -166,6 +179,9 @@ const adminSignIn = async (
       email: user?.email,
       role: user?.role,
       status: user?.status,
+      followers: user?.followers?.length ?? 0,
+      followings: user?.followings?.length ?? 0,
+      posts: postCount ?? 0,
     },
   };
 };

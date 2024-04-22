@@ -297,6 +297,7 @@ const getAllPosts = async ({
         comments: 1,
         summary: "$otherFields.summary",
         story: "$otherFields.story",
+
         title: "$otherFields.title",
         likes: 1,
         status: "$otherFields.status",
@@ -314,6 +315,19 @@ const getAllPosts = async ({
           },
         },
         amount: "$otherFields.amount",
+        // story: {
+        //   $cond: {
+        //     if: {
+        //       $or: [
+        //         { $eq: ['$otherFields.isFree', true] },
+        //         { $eq: ['$isPaid', true] }
+        //       ]
+        //     },
+        //     then: '$otherFields.story',
+        //     else: '' // Value to assign if none of the conditions match
+        //   }
+        // },
+
         category: "$otherFields.category",
         isDeleted: "$otherFields.isDeleted",
         createdAt: "$otherFields.createdAt",

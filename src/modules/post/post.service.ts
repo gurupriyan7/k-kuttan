@@ -154,11 +154,17 @@ const updatePostLikeAndComment = async (
     };
   }
   if (like || unlike) {
+    console.log(like);
+
     if (post?.likes?.includes(String(userId))) {
+      console.log("happy");
+
       likes = {
         $pull: { likes: userId },
       };
     } else {
+      console.log("sad");
+
       likes = {
         $push: { likes: userId },
       };
@@ -329,11 +335,25 @@ const getAllPosts = async ({
         // },
 
         category: "$otherFields.category",
+        image: "$otherFields.image",
         isDeleted: "$otherFields.isDeleted",
         createdAt: "$otherFields.createdAt",
         updatedAt: "$otherFields.updatedAt",
+
         __v: "$otherFields.__v",
         payments: 1,
+        liked: "$otherFields.likes",
+        isLiked: {
+          $switch: {
+            branches: [
+              {
+                case: { $in: [userId, "$otherFields.likes"] }, // Check if userId is in the otherFields.likes array
+                then: true,
+              },
+            ],
+            default: false, // Value to assign if userId is not in the otherFields.likes array
+          },
+        },
       },
     },
     {

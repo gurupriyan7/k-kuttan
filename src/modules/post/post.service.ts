@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-keys */
 import { ObjectId } from "../../constants/type.js";
 import { CreatePostData } from "./post.interface.js";
 import Post from "./post.model.js";
@@ -183,9 +184,11 @@ const updatePostLikeAndComment = async (
 const getAllPosts = async ({
   query,
   options,
+  userId,
 }: {
   query: FilterQuery<typeof Post>;
   options: QueryOptions;
+  userId?: string;
 }): Promise<{ data: PostDocument[]; totalCount: number } | any> => {
   const data = await Post.aggregate([
     {
@@ -235,6 +238,32 @@ const getAllPosts = async ({
       },
     },
     {
+      $lookup: {
+        from: "payment_transactions",
+        let: { userId, postId: "$_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$userId", "$$userId"] }, // Match user IDs
+                  { $eq: ["$postId", "$$postId"] }, // Match user IDs
+                  // Add other conditions if needed
+                ],
+              },
+            },
+          },
+        ],
+        as: "payments",
+      },
+    },
+    // {
+    //   $unwind: {
+    //     path: '$payments',
+    //     preserveNullAndEmptyArrays: true,
+    //   },
+    // },
+    {
       $addFields: {
         createdBy: {
           userName: "$createdBy.userName",
@@ -272,13 +301,25 @@ const getAllPosts = async ({
         likes: 1,
         status: "$otherFields.status",
         isFree: "$otherFields.isFree",
-        isPaid: "$otherFields.isPaid",
+        // isPaid: '$otherFields.isPaid',
+        isPaid: {
+          $switch: {
+            branches: [
+              {
+                case: { $gt: [{ $size: "$payments" }, 0] },
+                then: true,
+              },
+            ],
+            default: false, // Value to assign if none of the conditions match
+          },
+        },
         amount: "$otherFields.amount",
         category: "$otherFields.category",
         isDeleted: "$otherFields.isDeleted",
         createdAt: "$otherFields.createdAt",
         updatedAt: "$otherFields.updatedAt",
         __v: "$otherFields.__v",
+        payments: 1,
       },
     },
     {
@@ -298,10 +339,24 @@ const getAllPosts = async ({
   };
 };
 
+const findPostById = async (postId: string): Promise<PostDocument | null> => {
+  const data = await getAllPosts({
+    query: {
+      isDeleted: false,
+      _id: new ObjectId(postId),
+    },
+    options: {
+      sort: { createdBy: -1 },
+    },
+  });
+  return data?.data[0];
+};
+
 export const postService = {
   createPost,
   updatePost,
   getAllPostsByUser,
   updatePostLikeAndComment,
   getAllPosts,
+  findPostById,
 };

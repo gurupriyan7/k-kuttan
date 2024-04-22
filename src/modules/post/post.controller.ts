@@ -99,6 +99,16 @@ const updatePostLikeAndComment = errorWrapper(
     });
   },
 );
+const findPostById = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const data = await postService.findPostById(req.params?.id);
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
 
 const getAllPosts = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -146,6 +156,7 @@ const getAllPosts = errorWrapper(
         ...paginationOptions,
         sort: { createdBy: -1 },
       },
+      userId: (req.user?._id as string) ?? "123456789",
     });
 
     return responseUtils.success(res, {
@@ -161,4 +172,5 @@ export {
   getAllPostsByUser,
   updatePostLikeAndComment,
   getAllPosts,
+  findPostById,
 };

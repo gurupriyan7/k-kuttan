@@ -4,6 +4,7 @@ import { protect } from "../../middleware/auth.middleware.js";
 import { UserRole } from "../../modules/user/user.enum.js";
 import {
   createPost,
+  findPostById,
   getAllPosts,
   getAllPostsByUser,
   updatePost,
@@ -13,12 +14,17 @@ import {
 const router = Router();
 
 router.post("/", protect([UserRole.AUTHOR, UserRole.ADMIN]), createPost);
-router.get("/", getAllPosts);
+router.get(
+  "/",
+  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  getAllPosts,
+);
 router.get(
   "/user",
   protect([UserRole.AUTHOR, UserRole.ADMIN]),
   getAllPostsByUser,
 );
+router.get("/:id", findPostById);
 router.patch("/:id", protect([UserRole.AUTHOR, UserRole.ADMIN]), updatePost);
 router.patch(
   "/user/:id",

@@ -39,7 +39,7 @@ const PostSchema = new Schema(
     approvalStatus: {
       type: String,
       enum: UserApprovalStatus,
-      default: UserApprovalStatus.PENDING,
+      default: UserApprovalStatus.APPROVED,
     },
     status: {
       type: String,

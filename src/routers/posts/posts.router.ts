@@ -13,7 +13,11 @@ import {
 
 const router = Router();
 
-router.post("/", protect([UserRole.AUTHOR, UserRole.ADMIN]), createPost);
+router.post(
+  "/",
+  protect([UserRole.AUTHOR, UserRole.ADMIN, UserRole.USER]),
+  createPost,
+);
 router.get(
   "/",
   protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
@@ -24,7 +28,11 @@ router.get(
   protect([UserRole.AUTHOR, UserRole.ADMIN]),
   getAllPostsByUser,
 );
-router.get("/:id", findPostById);
+router.get(
+  "/:id",
+  protect([UserRole.AUTHOR, UserRole.ADMIN, UserRole.USER]),
+  findPostById,
+);
 router.patch("/:id", protect([UserRole.AUTHOR, UserRole.ADMIN]), updatePost);
 router.patch(
   "/user/:id",

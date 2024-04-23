@@ -157,14 +157,10 @@ const updatePostLikeAndComment = async (
     console.log(like);
 
     if (post?.likes?.includes(String(userId))) {
-      console.log("happy");
-
       likes = {
         $pull: { likes: userId },
       };
     } else {
-      console.log("sad");
-
       likes = {
         $push: { likes: userId },
       };

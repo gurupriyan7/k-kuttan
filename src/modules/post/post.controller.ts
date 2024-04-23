@@ -7,6 +7,7 @@ import { getPaginationOptions } from "../../utils/pagination.utils.js";
 import { ObjectId } from "../../constants/type.js";
 import { FilterQuery } from "mongoose";
 import Post from "./post.model.js";
+import { UserApprovalStatus } from "../../modules/user/user.enum.js";
 
 const createPost = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -120,6 +121,7 @@ const getAllPosts = errorWrapper(
     let query: FilterQuery<typeof Post> = {
       isDeleted: false,
       isDraft: false,
+      approvalStatus: UserApprovalStatus.APPROVED,
     };
     const searchTerm = req.query?.searchTerm;
     if (searchTerm) {

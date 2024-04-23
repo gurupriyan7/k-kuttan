@@ -35,6 +35,7 @@
   "license": "ISC",
   "homepage": "",
   "dependencies": {
+    "aws-sdk": "^2.1604.0",
     "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.5.1",

@@ -14,4 +14,8 @@ export const appConfig = {
   webUrl: process.env.WEB_URL ?? "",
   StrategicId: process.env.STRATEGIC_ID ?? "",
   assessmentId: process.env.ASSESSMENT_ID ?? "",
+  awsBucketRegion: process.env.AWS_BUCKET_REGION ?? "",
+  awsAccessKey: process.env.AWS_ACCESS_KEY ?? "",
+  awsSecretKey: process.env.AWS_SECRET_KEY ?? "",
+  awsBucketName: process.env.AWS_BUCKET_NAME ?? "",
 };

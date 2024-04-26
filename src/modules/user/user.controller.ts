@@ -81,6 +81,7 @@ const adminSignIn = errorWrapper(
 
 const updateUser = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    console.log(req.body, "dtaaaa");
     const data = await userService.updateUser(req?.user?._id as string, {
       ...req.body,
     });

@@ -17,7 +17,6 @@ import {
   loginSchema,
   resetPasswordSchema,
   signupSchema,
-  updateUserSchema,
 } from "../../modules/user/user.joi.js";
 
 import { protect } from "../../middleware/auth.middleware.js";
@@ -39,7 +38,6 @@ router.post("/author/login", JoiValidator(loginSchema), authorSignIn);
 router.patch(
   "/",
   protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
-  JoiValidator(updateUserSchema),
   updateUser,
 );
 router.patch("/:id", protect([UserRole.ADMIN]), updateUser);

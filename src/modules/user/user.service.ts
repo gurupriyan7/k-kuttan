@@ -270,7 +270,7 @@ const updateUser = async (
     },
   );
 
-  return await User.findOneAndUpdate(
+  const data = await User.findOneAndUpdate(
     {
       _id: new ObjectId(userId),
       isDeleted: false,
@@ -306,6 +306,27 @@ const updateUser = async (
         }),
     },
   );
+  const postCount = await Post.countDocuments({
+    createdBy: new ObjectId(user?._id),
+  });
+
+  return {
+    token: await generateToken({ id: user?._id }),
+    ...{
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      email: data?.email,
+      role: data?.role,
+      status: data?.status,
+      phoneNumber: data?.phoneNumber,
+      followers: data?.followers?.length ?? 0,
+      followings: data?.followings?.length ?? 0,
+      posts: postCount ?? 0,
+      profileImage: data?.profileImage,
+      coverImage: data?.coverImage,
+      userName: data?.userName,
+    },
+  };
 };
 
 const forgotPassword = async (email: string): Promise<any> => {

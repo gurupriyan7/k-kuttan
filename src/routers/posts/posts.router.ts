@@ -25,7 +25,7 @@ router.get(
 );
 router.get(
   "/user",
-  protect([UserRole.AUTHOR, UserRole.ADMIN]),
+  protect([UserRole.AUTHOR, UserRole.ADMIN, UserRole.USER]),
   getAllPostsByUser,
 );
 router.get(

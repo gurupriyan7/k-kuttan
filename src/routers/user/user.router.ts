@@ -9,6 +9,7 @@ import {
   authorSignIn,
   authorSignUp,
   updateUser,
+  findUserById,
 } from "../../modules/user/user.controller.js";
 import JoiValidator from "../../middleware/joi.middleware.js";
 import {
@@ -25,6 +26,11 @@ import { UserRole } from "../../modules/user/user.enum.js";
 const router = Router();
 
 // user-endpoints
+router.get(
+  "/",
+  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  findUserById,
+);
 router.post("/", JoiValidator(signupSchema), userSignUp);
 router.post("/login", JoiValidator(loginSchema), userSignIn);
 router.post("/admin/login", JoiValidator(loginSchema), adminSignIn);

@@ -123,6 +123,17 @@ const updatePassword = errorWrapper(
   },
 );
 
+const findUserById = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const data = await userService.findUserById(req.user?._id as string);
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
+
 export {
   userSignUp,
   userSignIn,
@@ -133,4 +144,5 @@ export {
   forgotPassword,
   updatePassword,
   updateUserByAdmin,
+  findUserById,
 };

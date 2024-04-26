@@ -72,6 +72,7 @@ const userSignUp = async (
     userName: user?.userName,
     email: user?.email,
     role: user?.role,
+    phoneNumber: user?.phoneNumber,
     status: user?.status,
     profileImage: user?.profileImage,
     token: await generateToken({
@@ -131,6 +132,7 @@ const userSignIn = async (
     role: user?.role,
     status: user?.status,
     coverImage: user?.coverImage,
+    phoneNumber: user?.phoneNumber,
     profileImage: user?.profileImage,
     followers: user?.followers?.length ?? 0,
     followings: user?.followings?.length ?? 0,
@@ -180,6 +182,7 @@ const adminSignIn = async (
       email: user?.email,
       role: user?.role,
       status: user?.status,
+      phoneNumber: user?.phoneNumber,
       followers: user?.followers?.length ?? 0,
       followings: user?.followings?.length ?? 0,
       posts: postCount ?? 0,
@@ -377,6 +380,16 @@ const updateUserByAdmin = async (userId: string): Promise<any> => {
     { new: true }, // This option returns the modified document rather than the original
   ).populate("-password");
 };
+const findUserById = async (userId: string): Promise<any> => {
+  console.log(userId, "userIddd");
+
+  return await User.findOne(
+    {
+      _id: new ObjectId(userId),
+      isDeleted: false,
+    }, // This option returns the modified document rather than the original
+  ).select("-password");
+};
 
 export const userService = {
   userSignUp,
@@ -386,4 +399,5 @@ export const userService = {
   forgotPassword,
   updatePassword,
   updateUserByAdmin,
+  findUserById,
 };

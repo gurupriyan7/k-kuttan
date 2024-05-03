@@ -3,8 +3,6 @@ import { sendMailData } from "../interface/app.interface.js";
 import { appConfig } from "../config/appConfig.js";
 
 export const sendEmail = async (mailData: sendMailData): Promise<boolean> => {
-  console.log(appConfig.sibKey, "sibkey", appConfig.sibSource);
-
   try {
     const headers = {
       accept: "application/json",
@@ -14,10 +12,10 @@ export const sendEmail = async (mailData: sendMailData): Promise<boolean> => {
     const { to, text, subject } = mailData;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const response = await axios.post(
-      appConfig.sibUrl,
+      "https://api.brevo.com/v3/smtp/email",
       {
         sender: {
-          email: appConfig.sibSource,
+          email: process.env.SIB_SOURCE,
         },
         to: [
           {
@@ -33,7 +31,7 @@ export const sendEmail = async (mailData: sendMailData): Promise<boolean> => {
     );
 
     return true;
-  } catch (err: any) {
+  } catch (err) {
     console.log(err, "error");
     return false;
   }

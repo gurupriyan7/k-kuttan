@@ -43,6 +43,11 @@ const createPaymentHistory = async ({
   // return await PaymentTransaction.create(paymentData);
 };
 
+const paymentWebhook = async (webHookData: any): Promise<any> => {
+  console.log(webHookData, "webhookData");
+};
+
 export const paymentService = {
   createPaymentHistory,
+  paymentWebhook,
 };

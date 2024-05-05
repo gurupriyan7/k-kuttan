@@ -17,5 +17,15 @@ const createPayment = errorWrapper(
     });
   },
 );
+const paymentWebhook = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const data = await paymentService.paymentWebhook(req.body);
 
-export { createPayment };
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
+
+export { createPayment, paymentWebhook };

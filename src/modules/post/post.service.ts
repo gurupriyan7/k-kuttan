@@ -211,6 +211,11 @@ const getAllPosts = async ({
       $match: query,
     },
     {
+      $addFields: {
+        noOfComments: { $size: "$comments" },
+      },
+    },
+    {
       $unwind: {
         path: "$comments",
         preserveNullAndEmptyArrays: true,
@@ -224,6 +229,7 @@ const getAllPosts = async ({
         as: "comments.userId",
       },
     },
+
     {
       $unwind: {
         path: "$comments.userId",
@@ -272,25 +278,32 @@ const getAllPosts = async ({
           profileImage: "$createdBy.profileImage",
         },
         comments: {
-          $map: {
-            input: "$comments",
-            as: "comment",
-            in: {
-              $mergeObjects: [
-                "$$comment",
-                {
-                  userId: {
-                    userName: "$$comment.userId.userName",
-                    profileImage: "$$comment.userId.profileImage",
-                  },
+          $cond: {
+            if: { $eq: [{ $size: "$comments" }, 0] },
+            then: [],
+            else: {
+              $map: {
+                input: "$comments",
+                as: "comment",
+                in: {
+                  $mergeObjects: [
+                    "$$comment",
+                    {
+                      userId: {
+                        userName: "$$comment.userId.userName",
+                        profileImage: "$$comment.userId.profileImage",
+                      },
+                    },
+                  ],
                 },
-              ],
+              },
             },
           },
         },
         likes: { $size: "$otherFields.likes" },
       },
     },
+
     {
       $project: {
         _id: 1,
@@ -299,7 +312,7 @@ const getAllPosts = async ({
         comments: 1,
         summary: "$otherFields.summary",
         story: "$otherFields.story",
-
+        noOfComments: "$otherFields.noOfComments",
         title: "$otherFields.title",
         likes: 1,
         status: "$otherFields.status",

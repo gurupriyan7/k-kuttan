@@ -220,7 +220,7 @@ const updateUser = async (
     profileImage,
     coverImage,
     savedPost,
-    follower,
+    // follower,
     // followerAuthor,
     following,
     password,
@@ -235,30 +235,13 @@ const updateUser = async (
       followings = {
         $pull: { followings: following },
       };
-      // followers = {
-      //   $pull: { followers: userId },
-      // };
-    } else {
-      followings = {
-        $push: { followings: following },
-      };
-      // followers = {
-      //   $push: { followers: userId },
-      // };
-    }
-  }
-  if (follower != null) {
-    if (user?.followers?.includes(String(follower))) {
-      // followings = {
-      //   $pull: { followings: following },
-      // };
       followers = {
         $pull: { followers: userId },
       };
     } else {
-      // followings = {
-      //   $push: { followings: following },
-      // };
+      followings = {
+        $push: { followings: following },
+      };
       followers = {
         $push: { followers: userId },
       };

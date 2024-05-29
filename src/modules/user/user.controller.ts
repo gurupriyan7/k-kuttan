@@ -126,7 +126,14 @@ const updatePassword = errorWrapper(
 
 const findUserById = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const data = await userService.findUserById(req.user?._id as string);
+    const isFollowing = req.query?.isFollowing;
+    const isFollowers = req.query?.isFollowers;
+
+    const data = await userService.findUserById({
+      userId: req.user?._id as string,
+      isFollowing,
+      isFollowers,
+    });
 
     return responseUtils.success(res, {
       data,

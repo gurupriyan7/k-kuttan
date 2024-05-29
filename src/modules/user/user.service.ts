@@ -401,15 +401,36 @@ const updateUserByAdmin = async (userId: string): Promise<any> => {
     { new: true }, // This option returns the modified document rather than the original
   ).populate("-password");
 };
-const findUserById = async (userId: string): Promise<any> => {
-  console.log(userId, "userIddd");
+const findUserById = async ({
+  userId,
+  isFollowers,
+  isFollowing,
+}: any): Promise<any> => {
+  // console.log(userId, "userIddd");
 
-  return await User.findOne(
-    {
-      _id: new ObjectId(userId),
-      isDeleted: false,
-    }, // This option returns the modified document rather than the original
-  ).select("-password");
+  return await User.findOne({
+    _id: new ObjectId(userId),
+    isDeleted: false,
+  })
+    .populate([
+      ...(isFollowers
+        ? [
+            {
+              path: "followers",
+              select: "firstName profileImage lastName",
+            },
+          ]
+        : []),
+      ...(isFollowing
+        ? [
+            {
+              path: "followings",
+              select: "firstName profileImage lastName",
+            },
+          ]
+        : []),
+    ])
+    .select("-password"); // Uncomment if needed to exclude the password field
 };
 
 export const userService = {

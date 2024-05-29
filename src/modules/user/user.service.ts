@@ -421,14 +421,14 @@ const findUserById = async ({
             },
           ]
         : []),
-      ...(isFollowing
-        ? [
-            {
-              path: "followings",
-              select: "firstName profileImage lastName userName",
-            },
-          ]
-        : []),
+      // ...(isFollowing
+      //   ? [
+      //       {
+      //         path: "followings",
+      //         select: "firstName profileImage lastName userName",
+      //       },
+      //     ]
+      //   : []),
     ])
     .select("-password"); // Uncomment if needed to exclude the password field
 };

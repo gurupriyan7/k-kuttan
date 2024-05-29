@@ -417,7 +417,7 @@ const findUserById = async ({
         ? [
             {
               path: "followers",
-              select: "firstName profileImage lastName",
+              select: "firstName profileImage lastName userName",
             },
           ]
         : []),
@@ -425,7 +425,7 @@ const findUserById = async ({
         ? [
             {
               path: "followings",
-              select: "firstName profileImage lastName",
+              select: "firstName profileImage lastName userName",
             },
           ]
         : []),

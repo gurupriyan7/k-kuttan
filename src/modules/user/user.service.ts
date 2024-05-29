@@ -73,10 +73,6 @@ const userSignUp = async (
     email: user?.email,
     role: user?.role,
     phoneNumber: user?.phoneNumber,
-    followingCount: user?.followings?.length ?? 0,
-    followersCount: user?.followers?.length ?? 0,
-    followers: user?.followers,
-    followings: user?.followings,
     status: user?.status,
     profileImage: user?.profileImage,
     token: await generateToken({
@@ -138,10 +134,8 @@ const userSignIn = async (
     coverImage: user?.coverImage,
     phoneNumber: user?.phoneNumber,
     profileImage: user?.profileImage,
-    followingCount: user?.followings?.length ?? 0,
-    followersCount: user?.followers?.length ?? 0,
-    followers: user?.followers,
-    followings: user?.followings,
+    followers: user?.followers?.length ?? 0,
+    followings: user?.followings?.length ?? 0,
     posts: postCount ?? 0,
     token: await generateToken({
       id: String(user?._id),
@@ -189,10 +183,8 @@ const adminSignIn = async (
       role: user?.role,
       status: user?.status,
       phoneNumber: user?.phoneNumber,
-      followingCount: user?.followings?.length ?? 0,
-      followersCount: user?.followers?.length ?? 0,
-      followers: user?.followers,
-      followings: user?.followings,
+      followers: user?.followers?.length ?? 0,
+      followings: user?.followings?.length ?? 0,
       posts: postCount ?? 0,
     },
   };
@@ -327,10 +319,8 @@ const updateUser = async (
       role: data?.role,
       status: data?.status,
       phoneNumber: data?.phoneNumber,
-      followingCount: data?.followings?.length ?? 0,
-      followersCount: data?.followers?.length ?? 0,
-      followers: data?.followers,
-      followings: data?.followings,
+      followers: data?.followers?.length ?? 0,
+      followings: data?.followings?.length ?? 0,
       posts: postCount ?? 0,
       profileImage: data?.profileImage,
       coverImage: data?.coverImage,
@@ -427,18 +417,18 @@ const findUserById = async ({
         ? [
             {
               path: "followers",
-              select: "firstName profileImage lastName userName",
+              select: "firstName profileImage lastName",
             },
           ]
         : []),
-      // ...(isFollowing
-      //   ? [
-      //       {
-      //         path: "followings",
-      //         select: "firstName profileImage lastName userName",
-      //       },
-      //     ]
-      //   : []),
+      ...(isFollowing
+        ? [
+            {
+              path: "followings",
+              select: "firstName profileImage lastName",
+            },
+          ]
+        : []),
     ])
     .select("-password"); // Uncomment if needed to exclude the password field
 };

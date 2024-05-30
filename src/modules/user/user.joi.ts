@@ -28,9 +28,9 @@ export const signupSchema = joi.object({
   userName: joi.string().required().messages({
     "string.required": "UserName is a required field",
   }),
-  phoneNumber: joi.string().required().messages({
-    "string.required": "PhoneNumber is a required field",
-  }),
+  // phoneNumber: joi.string().required().messages({
+  //   "string.required": "PhoneNumber is a required field",
+  // }),
   profileImage: joi.string().optional().messages({
     "string.base": "Profile image must be a string",
   }),

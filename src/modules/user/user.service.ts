@@ -29,7 +29,7 @@ const userSignUp = async (
     password,
     email,
     role,
-    phoneNumber,
+    // phoneNumber,
     profileImage,
     coverImage,
   } = userData;
@@ -54,7 +54,7 @@ const userSignUp = async (
     email,
     role,
     userName,
-    phoneNumber,
+    // phoneNumber,
     profileImage,
     coverImage,
     ...(profileImage != null && {
@@ -72,7 +72,7 @@ const userSignUp = async (
     userName: user?.userName,
     email: user?.email,
     role: user?.role,
-    phoneNumber: user?.phoneNumber,
+    // phoneNumber: user?.phoneNumber,
     status: user?.status,
     profileImage: user?.profileImage,
     token: await generateToken({

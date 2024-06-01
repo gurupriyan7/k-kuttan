@@ -10,6 +10,7 @@ import {
   authorSignUp,
   updateUser,
   findUserById,
+  updateAuthor,
 } from "../../modules/user/user.controller.js";
 import JoiValidator from "../../middleware/joi.middleware.js";
 import {
@@ -35,12 +36,13 @@ router.post("/login", JoiValidator(loginSchema), userSignIn);
 router.post("/admin/login", JoiValidator(loginSchema), adminSignIn);
 router.post("/author", JoiValidator(signupSchema), authorSignUp);
 router.post("/author/login", JoiValidator(loginSchema), authorSignIn);
+router.patch("/", protect([UserRole.ADMIN, UserRole.USER]), updateUser);
 router.patch(
-  "/",
-  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
-  updateUser,
+  "/author",
+  protect([UserRole.ADMIN, UserRole.AUTHOR]),
+  updateAuthor,
 );
-router.patch("/:id", protect([UserRole.ADMIN]), updateUser);
+router.patch("/admin/:id", protect([UserRole.ADMIN]), updateUser);
 
 router.post(
   "/forgot-password",

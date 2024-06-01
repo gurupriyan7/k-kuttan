@@ -197,7 +197,7 @@ const updateUser = async (
   const user: any = await User.findOne({
     _id: new ObjectId(userId),
     isDeleted: false,
-    role: UserRole.USER,
+    role: userData?.role ?? UserRole.USER,
   });
   if (user == null) {
     return await generateAPIError(errorMessages.userNotFound, 404);

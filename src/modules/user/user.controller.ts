@@ -84,6 +84,21 @@ const updateUser = errorWrapper(
     console.log(req.body, "dtaaaa");
     const data = await userService.updateUser(req?.user?._id as string, {
       ...req.body,
+      role: UserRole.USER,
+    });
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
+const updateAuthor = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    console.log(req.body, "dtaaaa");
+    const data = await userService.updateUser(req?.user?._id as string, {
+      ...req.body,
+      role: UserRole.AUTHOR,
     });
 
     return responseUtils.success(res, {
@@ -153,4 +168,5 @@ export {
   updatePassword,
   updateUserByAdmin,
   findUserById,
+  updateAuthor,
 };

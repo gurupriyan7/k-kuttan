@@ -11,6 +11,9 @@ const PostSchema = new Schema(
     summary: {
       type: String,
     },
+    // story: {
+    //   type: [{ page: Number, story: String }],
+    // },
     story: {
       type: String,
     },

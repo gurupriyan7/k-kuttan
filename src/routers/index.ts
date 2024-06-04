@@ -9,6 +9,7 @@ import { protect } from "../middleware/auth.middleware.js";
 import chatRouter from "./chat/chat.router.js";
 import messageRouter from "./message/message.router.js";
 import roomRouter from "./room/room.router.js";
+import webHookRouter from "./webHook/webeHook.router.js";
 
 const router = Router();
 router.post("/s3url", protect(), getS3Urls);
@@ -17,6 +18,7 @@ router.get("/", healthCheck);
 router.use("/user", userRouter);
 router.use("/post", postRouter);
 router.use("/payment", paymentRouter);
+router.use("/webHook", webHookRouter);
 router.use("/chat", chatRouter);
 router.use("/message", messageRouter);
 router.use("/room", roomRouter);

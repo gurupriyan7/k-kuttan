@@ -7,6 +7,7 @@ import { ObjectId } from "../../constants/type.js";
 import { generateAPIError } from "../../errors/apiError.js";
 import { errorMessages } from "../../constants/messages.js";
 import { appConfig } from "../../config/appConfig.js";
+import PaymentTransaction from "./payment.model.js";
 
 const razorpay = new Razorpay({
   key_id: appConfig.razorpayKeyId,
@@ -44,7 +45,8 @@ const createPaymentHistory = async ({
 };
 
 const paymentWebhook = async (webHookData: any): Promise<any> => {
-  console.log(webHookData, "webhookData");
+  // const {transactionId,userId,amount,status,postId}=webHookData;
+  return await PaymentTransaction.create(webHookData);
 };
 
 export const paymentService = {

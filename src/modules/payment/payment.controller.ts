@@ -19,11 +19,14 @@ const createPayment = errorWrapper(
 );
 const paymentWebhook = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const data = await paymentService.paymentWebhook(req.body);
+    const data = await paymentService.paymentWebhook({
+      ...req.body,
+      userId: req.user?._id,
+    });
 
     return responseUtils.success(res, {
       data,
-      status: 200,
+      status: 201,
     });
   },
 );

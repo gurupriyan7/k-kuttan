@@ -25,7 +25,13 @@ app.set("trust proxy", 1); // trust first proxy
 const corsOptions = {
   // eslint-disable-next-line consistent-return
   origin(origin: any, callback: any) {
-    console.log(origin, "origin");
+    console.log(
+      origin,
+      "origin",
+      whitelist.indexOf(origin) !== -1,
+      "wishList",
+      whitelist,
+    );
 
     if (!origin) {
       // for mobile app and postman client

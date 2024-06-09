@@ -102,7 +102,10 @@ const updatePostLikeAndComment = errorWrapper(
 );
 const findPostById = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const data = await postService.findPostById(req.params?.id);
+    const data = await postService.findPostById(
+      req.params?.id,
+      req?.user?._id as string,
+    );
 
     return responseUtils.success(res, {
       data,

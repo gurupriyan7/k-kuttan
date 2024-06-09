@@ -382,7 +382,10 @@ const getAllPosts = async ({
   };
 };
 
-const findPostById = async (postId: string): Promise<PostDocument | null> => {
+const findPostById = async (
+  postId: string,
+  userId: string,
+): Promise<PostDocument | null> => {
   const data = await getAllPosts({
     query: {
       isDeleted: false,
@@ -391,7 +394,9 @@ const findPostById = async (postId: string): Promise<PostDocument | null> => {
     options: {
       sort: { createdBy: -1 },
     },
+    userId,
   });
+
   return data?.data[0];
 };
 

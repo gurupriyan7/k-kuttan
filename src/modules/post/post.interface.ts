@@ -13,3 +13,9 @@ export interface CreatePostData {
   category?: string;
   tag?: string;
 }
+
+export interface FindUserData {
+  userId: string;
+  isFollowers?: boolean;
+  isFollowing?: boolean;
+}

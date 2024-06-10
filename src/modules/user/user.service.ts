@@ -408,7 +408,7 @@ const findUserById = async ({
 }: any): Promise<any> => {
   // console.log(userId, "userIddd");
 
-  const userData = await User.findOne({
+  return await User.findOne({
     _id: new ObjectId(userId),
     isDeleted: false,
   })
@@ -432,12 +432,14 @@ const findUserById = async ({
     ])
     .select("-password"); // Uncomment if needed to exclude the password field
 
-  const postCount = await Post.countDocuments({
-    createdBy: new ObjectId(userId),
-    isDeleted: false,
-  });
+  // const postCount = await Post.countDocuments({
+  //   createdBy: new ObjectId(userId),
+  //   isDeleted: false,
+  // })
+  // const data: any = userData
+  // data.postCount = postCount
 
-  return { ...userData, postCount };
+  // return data
 };
 
 export const userService = {

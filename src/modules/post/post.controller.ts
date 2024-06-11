@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-regexp */
 import { NextFunction, Response } from "express";
 import { RequestWithUser } from "../../interface/app.interface.js";
 import { errorWrapper } from "../../middleware/errorWrapper.js";
@@ -121,10 +122,20 @@ const getAllPosts = errorWrapper(
       page: req.query?.page,
     });
 
+    const isDraft = req?.query?.isDraft;
+
     let query: FilterQuery<typeof Post> = {
       isDeleted: false,
-      isDraft: false,
-      approvalStatus: UserApprovalStatus.APPROVED,
+      ...(!isDraft && {
+        approvalStatus: UserApprovalStatus.APPROVED,
+      }),
+      ...(isDraft
+        ? {
+            isDraft: true,
+          }
+        : {
+            isDraft: false,
+          }),
     };
     const searchTerm = req.query?.searchTerm;
     if (searchTerm) {

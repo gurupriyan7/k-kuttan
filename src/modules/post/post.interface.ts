@@ -1,6 +1,6 @@
 export interface CreatePostData {
   summary: string;
-  story: string;
+  story: [any];
   title: string;
   likes: [string];
   comments: [string];

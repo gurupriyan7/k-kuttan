@@ -18,7 +18,6 @@ import { getUuid, resetLinkEmailTemplate } from "../../utils/app.utils.js";
 import { sendMailData } from "../../interface/app.interface.js";
 import { sendEmail } from "../../utils/sendMail.js";
 import Post from "../../modules/post/post.model.js";
-import { FindUserData } from "modules/post/post.interface.js";
 
 const userSignUp = async (
   userData: UserSignUpData,
@@ -406,7 +405,7 @@ const findUserById = async ({
   userId,
   isFollowers,
   isFollowing,
-}: FindUserData): Promise<any> => {
+}: any): Promise<any> => {
   // console.log(userId, "userIddd");
 
   return await User.findOne({

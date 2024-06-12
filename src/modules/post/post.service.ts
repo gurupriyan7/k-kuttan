@@ -196,7 +196,7 @@ const getAllPostsByUser = async ({
   options: QueryOptions;
 }): Promise<{ data: PostDocument[]; totalCount: number } | any> => {
   const [data, totalCount] = await Promise.all([
-    Post.find(query, {}, options).populate("createdAt"),
+    Post.find(query, {}, options).populate("createdBy"),
     Post.countDocuments(query),
   ]);
 
@@ -395,6 +395,7 @@ const getAllPosts = async ({
         likes: 1,
         status: "$otherFields.status",
         isFree: "$otherFields.isFree",
+        approvalStatus: "$otherFields.approvalStatus",
         // isPaid: '$otherFields.isPaid',
         isPaid: {
           $switch: {

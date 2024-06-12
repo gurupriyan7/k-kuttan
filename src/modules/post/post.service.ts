@@ -309,6 +309,7 @@ const getAllPosts = async ({
         _id: 1,
         "createdBy.userName": 1,
         "createdBy.profileImage": 1,
+        "createdBy._id": 1,
         comments: 1,
         summary: "$otherFields.summary",
         story: "$otherFields.story",
@@ -352,6 +353,7 @@ const getAllPosts = async ({
         __v: "$otherFields.__v",
         payments: 1,
         liked: "$otherFields.likes",
+        isDraft: "$otherFields.isDraft",
         isLiked: {
           $switch: {
             branches: [

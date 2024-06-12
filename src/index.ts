@@ -1,4 +1,5 @@
 import express from "express";
+import bodyParser from "body-parser";
 // import path from "path";
 // import dotenv from "dotenv";
 import dbConnect from "./utils/dbConnection.js"; // import db connection feature from util folder
@@ -47,6 +48,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+// Increase the request size limit
+app.use(bodyParser.json({ limit: "50mb" })); // for JSON requests
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true })); // for URL-encoded requests
 
 app.use(
   express.json({

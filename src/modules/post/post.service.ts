@@ -14,6 +14,106 @@ const createPost = async (
   return await Post.create(createPostData);
 };
 
+// const updatePost = async (postId: string, postData: any): Promise<any> => {
+//   const {
+//     summary,
+//     story,
+//     title,
+//     like,
+//     comment,
+//     approvalStatus,
+//     status,
+//     image,
+//     amount,
+//     category,
+//     tag,
+//     role,
+//     userId,
+//     unlike,
+//   } = postData;
+
+//   const isAdmin = role === UserRole.ADMIN;
+
+//   const post: any = await Post.findOne({
+//     _id: new ObjectId(postId),
+//     isDeleted: false,
+//   });
+//   let likes: any;
+//   let comments: any;
+
+//   if (!post) {
+//     return await generateAPIError(errorMessages.postNotFount, 401);
+//   }
+//   if (comment != null) {
+//     const commentData = {
+//       comment,
+//       userId,
+//     };
+//     comments = {
+//       $push: { comments: commentData },
+//     };
+//   }
+
+//   if (like | unlike) {
+//     if (post?.likes?.includes(String(userId))) {
+//       likes = {
+//         $pull: { likes: userId },
+//       };
+//     } else {
+//       likes = {
+//         $push: { likes: userId },
+//       };
+//     }
+//   }
+
+//   console.log(story,"storiesss");
+
+//   return await Post.findOneAndUpdate(
+//     {
+//       _id: new ObjectId(postId),
+//       isDeleted: false,
+//     },
+//     {
+//       ...(like != null && {
+//         ...likes,
+//       }),
+//       ...(comment != null && {
+//         ...comments,
+//       }),
+//       ...(summary != null && {
+//         ...summary,
+//       }),
+//       ...(story != null && {
+//         ...story,
+//       }),
+//       ...(title != null && {
+//         ...title,
+//       }),
+//       ...(isAdmin &&
+//         approvalStatus != null && {
+//           ...approvalStatus,
+//         }),
+//       ...(isAdmin &&
+//         status != null && {
+//           ...status,
+//         }),
+//       ...(image != null && {
+//         ...image,
+//       }),
+//       ...(amount != null && {
+//         ...amount,
+//       }),
+//       ...(category != null && {
+//         ...category,
+//       }),
+//       ...(tag != null && {
+//         ...tag,
+//       }),
+//     },
+//     { new: true }
+//   );
+// };
+
 const updatePost = async (postId: string, postData: any): Promise<any> => {
   const {
     summary,
@@ -23,6 +123,7 @@ const updatePost = async (postId: string, postData: any): Promise<any> => {
     comment,
     approvalStatus,
     status,
+    isDraft,
     image,
     amount,
     category,
@@ -34,80 +135,56 @@ const updatePost = async (postId: string, postData: any): Promise<any> => {
 
   const isAdmin = role === UserRole.ADMIN;
 
+  // Find the post to update
   const post: any = await Post.findOne({
     _id: new ObjectId(postId),
     isDeleted: false,
   });
-  let likes: any;
-  let comments: any;
 
   if (!post) {
     return await generateAPIError(errorMessages.postNotFount, 401);
   }
+
+  const updateData: any = {};
+
+  // Handle comments
   if (comment != null) {
-    const commentData = {
-      comment,
-      userId,
-    };
-    comments = {
-      $push: { comments: commentData },
-    };
+    updateData.$push = updateData.$push || {};
+    updateData.$push.comments = { comment, userId };
   }
 
-  if (like | unlike) {
-    if (post?.likes?.includes(String(userId))) {
-      likes = {
-        $pull: { likes: userId },
-      };
+  // Handle likes and unlikes
+  if (like || unlike) {
+    if (post.likes.includes(String(userId))) {
+      updateData.$pull = updateData.$pull || {};
+      updateData.$pull.likes = userId;
     } else {
-      likes = {
-        $push: { likes: userId },
-      };
+      updateData.$push = updateData.$push || {};
+      updateData.$push.likes = userId;
     }
   }
 
+  // Directly assign other fields if they are not null
+  if (summary != null) updateData.summary = summary;
+  if (story != null) updateData.story = story;
+  if (title != null) updateData.title = title;
+  if (isAdmin && approvalStatus != null)
+    updateData.approvalStatus = approvalStatus;
+  if (isAdmin && status != null) updateData.status = status;
+  if (image != null) updateData.image = image;
+  if (amount != null) updateData.amount = amount;
+  if (category != null) updateData.category = category;
+  if (tag != null) updateData.tag = tag;
+  if (isDraft != null) updateData.isDraft = isDraft;
+
+  // Perform the update
   return await Post.findOneAndUpdate(
     {
       _id: new ObjectId(postId),
       isDeleted: false,
     },
-    {
-      ...(like != null && {
-        ...likes,
-      }),
-      ...(comment != null && {
-        ...comments,
-      }),
-      ...(summary != null && {
-        ...summary,
-      }),
-      ...(story != null && {
-        ...story,
-      }),
-      ...(title != null && {
-        ...title,
-      }),
-      ...(isAdmin &&
-        approvalStatus != null && {
-          ...approvalStatus,
-        }),
-      ...(isAdmin &&
-        status != null && {
-          ...status,
-        }),
-      ...(image != null && {
-        ...image,
-      }),
-      ...(amount != null && {
-        ...amount,
-      }),
-      ...(category != null && {
-        ...category,
-      }),
-      ...(tag != null && {
-        ...tag,
-      }),
-    },
+    updateData,
+    { new: true },
   );
 };
 

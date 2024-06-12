@@ -76,9 +76,13 @@ const getAllPostsByUser = errorWrapper(
 );
 const updatePost = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const data = await postService.createPost({
-      ...req.body,
-      createdBy: req.user?._id,
+    // const data = await postService.createPost({
+    //   ...req.body,
+    //   createdBy: req.user?._id,
+    //   role: req.user?.role,
+    // });
+    const data = await postService.updatePost(req?.params?.id, {
+      ...req?.body,
       role: req.user?.role,
     });
 

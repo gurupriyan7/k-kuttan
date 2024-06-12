@@ -20,7 +20,19 @@ const createChat = errorWrapper(
 const findChat = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const data = await chatService.findChat({
-      members: { $all: [req.user?._id, req.query?.memberId] },
+      members: { $all: [req.user?._id, req.query?.id] },
+    });
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
+const findUserChats = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const data = await chatService.findUserChats({
+      members: { $in: [req.user?._id] },
     });
 
     return responseUtils.success(res, {
@@ -30,4 +42,4 @@ const findChat = errorWrapper(
   },
 );
 
-export { createChat, findChat };
+export { createChat, findChat, findUserChats };

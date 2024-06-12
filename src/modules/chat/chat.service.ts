@@ -12,8 +12,15 @@ const findChat = async (query: FilterQuery<typeof Chat>): Promise<any> => {
     select: "firstName profileImage lastName",
   });
 };
+const findUserChats = async (query: FilterQuery<typeof Chat>): Promise<any> => {
+  return await Chat.find(query).populate({
+    path: "members",
+    select: "firstName profileImage lastName",
+  });
+};
 
 export const chatService = {
   createChat,
   findChat,
+  findUserChats,
 };

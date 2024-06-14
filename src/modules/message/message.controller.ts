@@ -28,6 +28,9 @@ const findMessages = errorWrapper(
         chatId: new ObjectId(req.params?.id),
         isDeleted: false,
       },
+      options: {
+        sort: { createdBy: -1 },
+      },
     });
 
     return responseUtils.success(res, {

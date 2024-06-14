@@ -9,7 +9,11 @@ import {
 } from "../../modules/chat/chat.controller.js";
 
 const router = Router();
-router.post("/", protect([UserRole.ADMIN]), createChat);
+router.post(
+  "/",
+  protect([UserRole.ADMIN, UserRole?.AUTHOR, UserRole?.USER]),
+  createChat,
+);
 router.get(
   "/",
   protect([UserRole.ADMIN, UserRole.USER, UserRole.AUTHOR]),

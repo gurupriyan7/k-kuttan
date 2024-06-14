@@ -7,7 +7,7 @@ import { RequestWithUser } from "../../interface/app.interface.js";
 const createChat = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const data = await chatService.createChat({
-      members: [req.user?._id as string, req.body?.memberId],
+      members: [req.user?._id as string, req.body?.receiverId],
     });
 
     return responseUtils.success(res, {
@@ -20,7 +20,7 @@ const createChat = errorWrapper(
 const findChat = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const data = await chatService.findChat({
-      members: { $all: [req.user?._id, req.query?.id] },
+      members: { $all: [req.user?._id, req.params?.id] },
     });
 
     return responseUtils.success(res, {

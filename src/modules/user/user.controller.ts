@@ -128,6 +128,7 @@ const forgotPassword = errorWrapper(
     });
   },
 );
+
 const updatePassword = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
     const data = await userService.updatePassword(req.body);
@@ -149,6 +150,8 @@ const findUserById = errorWrapper(
       isFollowing: true,
       isFollowers: true,
     });
+
+    console.log(data, "apple");
 
     return responseUtils.success(res, {
       data,

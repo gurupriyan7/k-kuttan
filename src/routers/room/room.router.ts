@@ -12,7 +12,11 @@ import {
 } from "../../modules/room/room.controller.js";
 
 const router = Router();
-router.post("/", protect([UserRole.ADMIN]), createRoom);
+router.post(
+  "/",
+  protect([UserRole.ADMIN, UserRole.USER, UserRole.AUTHOR]),
+  createRoom,
+);
 router.get(
   "/",
   protect([UserRole.ADMIN, UserRole.USER, UserRole.AUTHOR]),

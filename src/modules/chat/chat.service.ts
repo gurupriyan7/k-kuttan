@@ -3,6 +3,16 @@ import Chat from "./chat.model.js";
 import { ChatData } from "./chat.interface.js";
 
 const createChat = async (chatData: ChatData): Promise<any> => {
+  const { members } = chatData;
+  const chatExists = await Chat.findOne({
+    members: { $all: members },
+  });
+
+  console.log(members, "members");
+
+  if (chatExists) {
+    return chatExists;
+  }
   return await Chat.create(chatData);
 };
 

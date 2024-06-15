@@ -20,16 +20,14 @@ const addMessage = async (messageData: MessageData): Promise<any> => {
   return await Messages.create(messageData);
 };
 
-const findMessages = async ({
-  query = {},
-  options,
-}: any): Promise<{ data: any[]; totalCount: number }> => {
-  const [data, totalCount] = await Promise.all([
-    Messages.find(query, {}, options),
-    Messages.countDocuments(query),
-  ]);
+const findMessages = async ({ query = {}, options }: any): Promise<any> => {
+  // const [data, totalCount] = await Promise.all([
+  //   Messages.find(query, {}, options),
+  //   Messages.countDocuments(query),
+  // ]);
 
-  return { data, totalCount };
+  // return { data, totalCount };
+  return await Messages.find(query, {}, options);
 };
 
 export const messageService = {

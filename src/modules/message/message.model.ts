@@ -1,12 +1,15 @@
+import { ObjectId } from "../../constants/type.js";
 import { model, Schema } from "mongoose";
 
 const MessageSchema = new Schema(
   {
     chatId: {
-      type: String,
+      type: ObjectId,
+      ref: "chats",
     },
     senderId: {
-      type: String,
+      type: ObjectId,
+      ref: "users",
     },
     text: {
       type: String,

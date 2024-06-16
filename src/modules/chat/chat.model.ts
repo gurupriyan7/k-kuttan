@@ -7,12 +7,15 @@ const ChatSchema = new Schema(
       type: [ObjectId],
       ref: "users",
     },
+    isRoom: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
   },
 );
-ChatSchema.index({ members: 1 }, { unique: true });
 
 const Chat = model("Chats", ChatSchema);
 export default Chat;

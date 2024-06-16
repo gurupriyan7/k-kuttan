@@ -23,6 +23,8 @@ const addMessage = errorWrapper(
 );
 const findMessages = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    console.log(req);
+
     const data = await messageService.findMessages({
       query: {
         chatId: new ObjectId(req.params?.id),

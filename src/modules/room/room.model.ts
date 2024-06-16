@@ -15,6 +15,10 @@ const RoomSchema = new Schema(
       type: [ObjectId],
       ref: "users",
     },
+    chatId: {
+      type: ObjectId,
+      ref: "chats",
+    },
     isDeleted: {
       type: Boolean,
       default: false,

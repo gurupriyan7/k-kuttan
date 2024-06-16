@@ -2,29 +2,29 @@ import { generateAPIError } from "../../errors/apiError.js";
 import { ObjectId } from "../../constants/type.js";
 import Room from "./room.model.js";
 import { errorMessages } from "../../constants/messages.js";
+import Chat from "../../modules/chat/chat.model.js";
 
 const createRoom = async (roomData: any): Promise<any> => {
-  return await Room.create(roomData);
+  const chat = await Chat.create({
+    members: roomData?.members,
+  });
+  return await Room.create({
+    ...roomData,
+    chatId: chat?._id,
+  });
 };
 
-const getAllRooms = async ({
-  query = {},
-  options,
-}: any): Promise<{ data: any[]; totalCount: number }> => {
-  const [data, totalCount] = await Promise.all([
-    Room.find(query, {}, options)
-      .populate({
-        path: "admin",
-        select: "firstName profileImage lastName",
-      })
-      .populate({
-        path: "members",
-        select: "firstName profileImage lastName",
-      }),
-    Room.countDocuments(query),
-  ]);
-
-  return { data, totalCount };
+const getAllRooms = async ({ query = {}, options }: any): Promise<any> => {
+  return await Room.find(query, {}, options)
+    .populate({
+      path: "admin",
+      select: "firstName profileImage lastName",
+    })
+    .populate({
+      path: "members",
+      select: "firstName profileImage lastName",
+    });
+  // .populate("chatId")
 };
 
 const joinRoom = async (joinRoomData: any): Promise<any> => {
@@ -40,7 +40,7 @@ const joinRoom = async (joinRoomData: any): Promise<any> => {
     return await generateAPIError(errorMessages.userAlreadyJoined, 400);
   }
 
-  return await Room.findOneAndUpdate(
+  const data = await Room.findOneAndUpdate(
     {
       _id: new ObjectId(roomId),
       isDeleted: false,
@@ -48,7 +48,11 @@ const joinRoom = async (joinRoomData: any): Promise<any> => {
     {
       $push: { members: userId },
     },
+    { new: true },
   );
+  console.log(data, "join room");
+
+  return data;
 };
 const leaveRoom = async (joinRoomData: any): Promise<any> => {
   const { userId, roomId } = joinRoomData;

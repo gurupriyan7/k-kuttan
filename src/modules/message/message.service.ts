@@ -6,12 +6,14 @@ import Messages from "./message.model.js";
 import { errorMessages } from "../../constants/messages.js";
 
 const addMessage = async (messageData: MessageData): Promise<any> => {
-  const { chatId, senderId } = messageData;
+  const { chatId } = messageData;
+  console.log(messageData, "messageData");
 
   const chat = await Chat.findOne({
     _id: new ObjectId(chatId),
-    members: { $in: [new ObjectId(senderId)] },
+    // members: { $in: [new ObjectId(senderId)] },
   });
+  console.log(chat, "chatttt--------------");
 
   if (chat == null) {
     return await generateAPIError(errorMessages.chatNotFount, 400);

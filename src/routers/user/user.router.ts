@@ -11,6 +11,7 @@ import {
   updateUser,
   findUserById,
   updateAuthor,
+  followUnfollowUser,
 } from "../../modules/user/user.controller.js";
 import JoiValidator from "../../middleware/joi.middleware.js";
 import {
@@ -43,6 +44,11 @@ router.patch(
   updateAuthor,
 );
 router.patch("/admin/:id", protect([UserRole.ADMIN]), updateUser);
+router.patch(
+  "/:id",
+  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  followUnfollowUser,
+);
 
 router.post(
   "/forgot-password",

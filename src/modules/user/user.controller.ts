@@ -93,6 +93,21 @@ const updateUser = errorWrapper(
     });
   },
 );
+
+const followUnfollowUser = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    console.log(req.body, "dtaaaa");
+    const data = await userService.updateUser(req?.user?._id as string, {
+      ...req.body,
+      role: req?.user?.role,
+    });
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
 const updateAuthor = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
     console.log(req.body, "dtaaaa");
@@ -172,4 +187,5 @@ export {
   updateUserByAdmin,
   findUserById,
   updateAuthor,
+  followUnfollowUser,
 };

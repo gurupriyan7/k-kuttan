@@ -197,7 +197,6 @@ const updateUser = async (
   const user: any = await User.findOne({
     _id: new ObjectId(userId),
     isDeleted: false,
-    role: userData?.role ?? UserRole.USER,
   });
   if (user == null) {
     return await generateAPIError(errorMessages.userNotFound, 404);
@@ -305,7 +304,16 @@ const updateUser = async (
           password: hashedPassword,
         }),
     },
-  );
+    { new: true },
+  )
+    .populate({
+      path: "followers",
+      select: "firstName profileImage lastName",
+    })
+    .populate({
+      path: "followings",
+      select: "firstName profileImage lastName",
+    });
   const postCount = await Post.countDocuments({
     createdBy: new ObjectId(user?._id),
   });
@@ -319,8 +327,8 @@ const updateUser = async (
       role: data?.role,
       status: data?.status,
       phoneNumber: data?.phoneNumber,
-      followers: data?.followers?.length ?? 0,
-      followings: data?.followings?.length ?? 0,
+      followers: data?.followers,
+      followings: data?.followings,
       posts: postCount ?? 0,
       profileImage: data?.profileImage,
       coverImage: data?.coverImage,

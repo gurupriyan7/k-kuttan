@@ -50,6 +50,16 @@ const joinRoom = async (joinRoomData: any): Promise<any> => {
     },
     { new: true },
   );
+  await Chat.findOneAndUpdate(
+    {
+      _id: new ObjectId(String(data?.chatId)),
+    },
+    {
+      $push: { members: userId },
+    },
+    { new: true },
+  );
+
   console.log(data, "join room");
 
   return data;

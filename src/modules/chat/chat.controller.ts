@@ -9,7 +9,7 @@ const createChat = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const data = await chatService.createChat({
       members: [req.user?._id as string, req.body?.receiverId],
-      ...(req?.body?.isRoom && {
+      ...(req?.body?.isRoom === "true" && {
         isRoom: req?.body?.isRoom,
       }),
     });
@@ -23,7 +23,7 @@ const createChat = errorWrapper(
 
 const findChat = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const isRoom = req?.query?.isRoom;
+    const isRoom = req?.query?.isRoom === "true";
     const data = await chatService.findChat({
       members: { $all: [req.user?._id, req.params?.id] },
       ...(isRoom && {
@@ -42,8 +42,15 @@ const findChat = errorWrapper(
 );
 const findChatById = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const isRoom = req?.query?.isRoom === "true";
     const data = await chatService.findChat({
       _id: new ObjectId(req?.params?.id),
+      ...(isRoom && {
+        isRoom: true,
+      }),
+      ...(!isRoom && {
+        isRoom: false,
+      }),
     });
 
     return responseUtils.success(res, {
@@ -54,7 +61,7 @@ const findChatById = errorWrapper(
 );
 const findUserChats = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const isRoom = req?.query?.isRoom;
+    const isRoom = req?.query?.isRoom === "true";
     const data = await chatService.findUserChats({
       members: { $in: [req.user?._id] },
       ...(isRoom && {

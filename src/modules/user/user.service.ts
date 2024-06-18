@@ -222,22 +222,46 @@ const updateUser = async (
   let followers: any;
   let hashedPassword;
   if (following != null) {
-    if (user?.followings?.includes(String(following))) {
-      followings = {
-        $pull: { followings: following },
-      };
+    const followUser: any = await User.findOne({
+      _id: new ObjectId(following),
+      isDeleted: false,
+    });
+    if (followUser == null) {
+      return await generateAPIError(errorMessages.userNotFound, 404);
+    }
+    if (followUser?.followers?.includes(userId)) {
       followers = {
         $pull: { followers: userId },
       };
-    } else {
       followings = {
-        $push: { followings: following },
+        $pull: { followings: following },
       };
+    } else {
       followers = {
         $push: { followers: userId },
       };
+      followings = {
+        $push: { followings: following },
+      };
     }
   }
+  // if (follower != null) {
+  //   if (user?.followers?.includes(String(follower))) {
+  //     followers = {
+  //       $pull: { followers: follower },
+  //     };
+  //     followings = {
+  //       $pull: { followings: userId },
+  //     };
+  //   } else {
+  //     followers = {
+  //       $push: { followers: follower },
+  //     };
+  //     followings = {
+  //       $push: { followings: userId },
+  //     };
+  //   }
+  // }
 
   if (password != null && newPassword != null) {
     const comparePassword = await bcrypt.compare(password, user.password ?? "");
@@ -296,6 +320,9 @@ const updateUser = async (
       ...(following != null && {
         ...followings,
       }),
+      // ...(follower != null && {
+      //   ...followers,
+      // }),
       ...(savedPost != null && {
         ...savedPosts,
       }),

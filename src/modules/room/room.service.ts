@@ -7,6 +7,7 @@ import Chat from "../../modules/chat/chat.model.js";
 const createRoom = async (roomData: any): Promise<any> => {
   const chat = await Chat.create({
     members: roomData?.members,
+    isRoom: true,
   });
   return await Room.create({
     ...roomData,

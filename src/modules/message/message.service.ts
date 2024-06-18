@@ -29,7 +29,10 @@ const findMessages = async ({ query = {}, options }: any): Promise<any> => {
   // ]);
 
   // return { data, totalCount };
-  return await Messages.find(query, {}, options);
+  return await Messages.find(query, {}, options).populate({
+    path: "senderId",
+    select: "firstName profileImage lastName userName",
+  });
 };
 
 export const messageService = {

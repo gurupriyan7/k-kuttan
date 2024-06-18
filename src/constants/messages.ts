@@ -11,7 +11,7 @@ const errorMessages = {
   postNotFount: "Post not found by Id",
   passwordNotMatch: "Old password not match",
   chatNotFount: "Chat not found by this user",
-  userAlreadyJoined: "User already in the group",
+  userAlreadyJoined: "You are already in the group",
   userNotINTheGroup: "User not joined the group",
   roomNotFound: "Room not found",
 };

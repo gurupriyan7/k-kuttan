@@ -30,7 +30,7 @@ router.get(
 );
 router.get(
   "/:id",
-  protect([UserRole.AUTHOR, UserRole.ADMIN, UserRole.USER]),
+  optionalProtect([UserRole.AUTHOR, UserRole.ADMIN, UserRole.USER]),
   findPostById,
 );
 router.patch("/:id", protect([UserRole.AUTHOR, UserRole.ADMIN]), updatePost);

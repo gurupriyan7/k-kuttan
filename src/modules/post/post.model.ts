@@ -63,7 +63,7 @@ const PostSchema = new Schema(
     },
     amount: {
       type: Number,
-      default: 0,
+      default: 1,
     },
     category: {
       type: String,

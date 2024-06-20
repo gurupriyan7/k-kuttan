@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable security/detect-non-literal-regexp */
 import { NextFunction, Response } from "express";
 import { RequestWithUser } from "../../interface/app.interface.js";
@@ -121,10 +122,10 @@ const findPostById = errorWrapper(
 
 const getAllPosts = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const paginationOptions = getPaginationOptions({
-      limit: req.query?.limit,
-      page: req.query?.page,
-    });
+    // const paginationOptions = getPaginationOptions({
+    //   limit: req.query?.limit,
+    //   page: req.query?.page,
+    // });
 
     const isDraft = req?.query?.isDraft;
 
@@ -173,7 +174,6 @@ const getAllPosts = errorWrapper(
         }),
       },
       options: {
-        ...paginationOptions,
         sort: { createdBy: -1 },
       },
       userId: (req.user?._id as string) ?? "123456789",

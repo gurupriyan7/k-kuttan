@@ -6,7 +6,7 @@ interface Pagination<T> {
 
 export const getPaginationOptions = ({
   noLimit,
-  limit = !(noLimit ?? false) && 30,
+  limit = !(noLimit ?? false) && 10,
   page = 1,
 }: Pagination<any>): { limit: number; skip: number } => {
   if (Number(limit) > 30) {

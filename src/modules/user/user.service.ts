@@ -346,21 +346,21 @@ const updateUser = async (
   });
 
   return {
-    token: await generateToken({ id: user?._id }),
-    ...{
-      firstName: data?.firstName,
-      lastName: data?.lastName,
-      email: data?.email,
-      role: data?.role,
-      status: data?.status,
-      phoneNumber: data?.phoneNumber,
-      followers: data?.followers,
-      followings: data?.followings,
-      posts: postCount ?? 0,
-      profileImage: data?.profileImage,
-      coverImage: data?.coverImage,
-      userName: data?.userName,
-    },
+    // token: await generateToken({ id: user?._id }),
+    // ...{
+    firstName: data?.firstName,
+    lastName: data?.lastName,
+    email: data?.email,
+    role: data?.role,
+    status: data?.status,
+    phoneNumber: data?.phoneNumber,
+    followers: data?.followers,
+    followings: data?.followings,
+    posts: postCount ?? 0,
+    profileImage: data?.profileImage,
+    coverImage: data?.coverImage,
+    userName: data?.userName,
+    // },
   };
 };
 
@@ -477,6 +477,18 @@ const findUserById = async ({
   // return data
 };
 
+const getAllUsers = async ({ query, options }: any): Promise<any> => {
+  // const data = await User.find(query, {}, options)
+  const data = await User.find(
+    query,
+    "firstName lastName profileImage _id userName role followers",
+    options,
+  );
+  const totalCount = await User.countDocuments(query);
+
+  return { data, totalCount };
+};
+
 export const userService = {
   userSignUp,
   userSignIn,
@@ -486,4 +498,5 @@ export const userService = {
   updatePassword,
   updateUserByAdmin,
   findUserById,
+  getAllUsers,
 };

@@ -12,6 +12,7 @@ import {
   findUserById,
   updateAuthor,
   followUnfollowUser,
+  getAllUsers,
 } from "../../modules/user/user.controller.js";
 import JoiValidator from "../../middleware/joi.middleware.js";
 import {
@@ -31,6 +32,11 @@ router.get(
   "/",
   protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
   findUserById,
+);
+router.get(
+  "/all",
+  // protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  getAllUsers,
 );
 router.post("/", JoiValidator(signupSchema), userSignUp);
 router.post("/login", JoiValidator(loginSchema), userSignIn);

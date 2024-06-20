@@ -57,6 +57,11 @@ export const optionalProtect = (allowedRoles?: string[]) => {
     let token: any;
 
     if (req?.headers?.authorization?.startsWith("Bearer") === true) {
+      console.log(
+        (token = req.headers.authorization.split(" ")[1]),
+        "calling.....",
+      );
+
       try {
         token = req.headers.authorization.split(" ")[1];
         let decoded: any = {};

@@ -3,8 +3,9 @@ import { Response, Request, NextFunction } from "express";
 import { responseUtils } from "../../utils/response.utils.js";
 import { errorWrapper } from "../../middleware/errorWrapper.js";
 import { userService } from "./user.service.js";
-import { UserRole } from "./user.enum.js";
+import { UserRole, UserStatus } from "./user.enum.js";
 import { RequestWithUser } from "../../interface/app.interface.js";
+import { getPaginationOptions } from "../../utils/pagination.utils.js";
 // import { FilterQuery } from 'mongoose'
 // import User from './user.model.js'
 // import { ObjectId } from '../../constants/type.js'
@@ -174,6 +175,32 @@ const findUserById = errorWrapper(
     });
   },
 );
+const getAllUsers = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const paginationOptions = getPaginationOptions({
+      limit: req.query?.limit,
+      page: req.query?.page,
+    });
+
+    const data = await userService.getAllUsers({
+      query: {
+        isDeleted: false,
+        role: { $ne: UserRole.ADMIN },
+        status: UserStatus.ACTIVE,
+      },
+      options: {
+        sort: { createdBy: -1 },
+        ...paginationOptions,
+      },
+    });
+    console.log(data, "apple");
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
 
 export {
   userSignUp,
@@ -188,4 +215,5 @@ export {
   findUserById,
   updateAuthor,
   followUnfollowUser,
+  getAllUsers,
 };

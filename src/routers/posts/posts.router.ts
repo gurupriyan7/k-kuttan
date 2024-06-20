@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Router } from "express";
-import { protect } from "../../middleware/auth.middleware.js";
+import { protect, optionalProtect } from "../../middleware/auth.middleware.js";
 import { UserRole } from "../../modules/user/user.enum.js";
 import {
   createPost,
@@ -20,7 +20,7 @@ router.post(
 );
 router.get(
   "/",
-  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  optionalProtect([UserRole.AUTHOR, UserRole.ADMIN, UserRole.USER]),
   getAllPosts,
 );
 router.get(

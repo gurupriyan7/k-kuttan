@@ -31,7 +31,7 @@ const UserSchema = new Schema(
     },
     password: {
       type: String,
-      minlength: 6,
+      minlength: 4,
     },
     status: {
       type: String,

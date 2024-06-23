@@ -35,7 +35,7 @@ router.get(
 );
 router.get(
   "/all",
-  // protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
+  protect([UserRole.ADMIN, UserRole.AUTHOR, UserRole.USER]),
   getAllUsers,
 );
 router.post("/", JoiValidator(signupSchema), userSignUp);

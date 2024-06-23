@@ -264,11 +264,15 @@ const getAllPosts = async ({
   query,
   options,
   userId,
+  isMostLiked,
 }: {
   query: FilterQuery<typeof Post>;
   options: QueryOptions;
   userId?: string;
+  isMostLiked?: boolean;
 }): Promise<{ data: PostDocument[]; totalCount: number } | any> => {
+  console.log(userId, "userId");
+
   const data = await Post.aggregate([
     {
       $lookup: {
@@ -331,8 +335,9 @@ const getAllPosts = async ({
             $match: {
               $expr: {
                 $and: [
-                  { $eq: ["$userId", "$$userId"] }, // Match user IDs
-                  { $eq: ["$postId", "$$postId"] }, // Match user IDs
+                  { $eq: ["$userId", "$$userId"] },
+                  { $eq: ["$postId", "$$postId"] },
+                  { $eq: ["$status", "success"] },
                   // Add other conditions if needed
                 ],
               },
@@ -342,12 +347,6 @@ const getAllPosts = async ({
         as: "payments",
       },
     },
-    // {
-    //   $unwind: {
-    //     path: '$payments',
-    //     preserveNullAndEmptyArrays: true,
-    //   },
-    // },
     {
       $addFields: {
         createdBy: {
@@ -389,7 +388,7 @@ const getAllPosts = async ({
         "createdBy._id": 1,
         comments: 1,
         summary: "$otherFields.summary",
-        story: "$otherFields.story",
+        // story: '$otherFields.story',
         noOfComments: "$otherFields.noOfComments",
         title: "$otherFields.title",
         likes: 1,
@@ -409,25 +408,24 @@ const getAllPosts = async ({
           },
         },
         amount: "$otherFields.amount",
-        // story: {
-        //   $cond: {
-        //     if: {
-        //       $or: [
-        //         { $eq: ['$otherFields.isFree', true] },
-        //         { $eq: ['$isPaid', true] }
-        //       ]
-        //     },
-        //     then: '$otherFields.story',
-        //     else: '' // Value to assign if none of the conditions match
-        //   }
-        // },
+        story: {
+          $cond: {
+            if: {
+              $or: [
+                { $eq: ["$otherFields.isFree", true] },
+                { $gt: [{ $size: "$payments" }, 0] },
+              ],
+            },
+            then: "$otherFields.story",
+            else: "", // Value to assign if none of the conditions match
+          },
+        },
 
         category: "$otherFields.category",
         image: "$otherFields.image",
         isDeleted: "$otherFields.isDeleted",
         createdAt: "$otherFields.createdAt",
         updatedAt: "$otherFields.updatedAt",
-
         __v: "$otherFields.__v",
         payments: 1,
         liked: "$otherFields.likes",
@@ -464,7 +462,7 @@ const getAllPosts = async ({
 
 const findPostById = async (
   postId: string,
-  userId: string,
+  userId?: string,
 ): Promise<PostDocument | null> => {
   const data = await getAllPosts({
     query: {
@@ -476,6 +474,8 @@ const findPostById = async (
     },
     userId,
   });
+
+  console.log(data?.data[0], "postData--------", userId);
 
   return data?.data[0];
 };

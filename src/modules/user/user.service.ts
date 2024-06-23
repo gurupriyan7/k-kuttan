@@ -477,16 +477,45 @@ const findUserById = async ({
   // return data
 };
 
-const getAllUsers = async ({ query, options }: any): Promise<any> => {
+const getAllUsers = async ({ query, options, userId }: any): Promise<any> => {
   // const data = await User.find(query, {}, options)
-  const data = await User.find(
-    query,
-    "firstName lastName profileImage _id userName role followers",
-    options,
-  );
-  const totalCount = await User.countDocuments(query);
+  // const data = await User.find(
+  //   query,
+  //   'firstName lastName profileImage _id userName role followers',
+  //   options,
+  // )
+  // const totalCount = await User.countDocuments(query)
 
-  return { data, totalCount };
+  const data = await User.aggregate([
+    { $match: query },
+
+    {
+      $project: {
+        firstName: 1,
+        lastName: 1,
+        profileImage: 1,
+        _id: 1,
+        userName: 1,
+        role: 1,
+        followers: 1,
+        isFollowing: { $in: [userId, "$followers"] },
+      },
+    },
+    {
+      $sort: options?.sort,
+    },
+    {
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [{ $skip: options?.skip ?? 0 }, { $limit: options?.limit ?? 10 }],
+      },
+    },
+  ]);
+
+  return {
+    data: data[0]?.data,
+    totalCount: data[0]?.metadata[0]?.total || 0,
+  };
 };
 
 export const userService = {

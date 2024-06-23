@@ -192,6 +192,7 @@ const getAllUsers = errorWrapper(
         sort: { createdBy: -1 },
         ...paginationOptions,
       },
+      userId: req?.user?._id,
     });
     console.log(data, "apple");
 

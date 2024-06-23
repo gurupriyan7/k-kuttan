@@ -110,7 +110,7 @@ const findPostById = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const data = await postService.findPostById(
       req.params?.id,
-      req?.user?._id as string,
+      (req?.user?._id as string) ?? "1234",
     );
 
     return responseUtils.success(res, {
@@ -128,6 +128,7 @@ const getAllPosts = errorWrapper(
     // });
 
     const isDraft = req?.query?.isDraft;
+    const isMostLiked = req?.query?.isMostLiked;
 
     let query: FilterQuery<typeof Post> = {
       isDeleted: false,
@@ -177,6 +178,7 @@ const getAllPosts = errorWrapper(
         sort: { createdBy: -1 },
       },
       userId: (req.user?._id as string) ?? "123456789",
+      ...(isMostLiked && { isMostLiked: Boolean(isMostLiked) }),
     });
 
     return responseUtils.success(res, {

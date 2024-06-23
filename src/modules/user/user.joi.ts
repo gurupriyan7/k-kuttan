@@ -14,7 +14,7 @@ export const signupSchema = joi.object({
     // )
     .required()
     .messages({
-      "string.min": "Password must be at least 8 characters long",
+      "string.min": "Password must be at least 4 characters long",
       // "string.pattern.base":
       // "Password must contain atleast one uppercase letter, one lowercase letter, one number and one special character",
       "any.required": "Password is a required field",

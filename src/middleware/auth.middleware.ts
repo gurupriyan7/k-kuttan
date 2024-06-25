@@ -56,11 +56,11 @@ export const optionalProtect = (allowedRoles?: string[]) => {
   return async (req: RequestWithUser, res: Response, next: NextFunction) => {
     let token: any;
 
-    if (req?.headers?.authorization?.startsWith("Bearer") === true) {
-      console.log(
-        (token = req.headers.authorization.split(" ")[1]),
-        "calling.....",
-      );
+    if (
+      req?.headers?.authorization?.startsWith("Bearer") === true &&
+      req.headers.authorization.split(" ")[1]
+    ) {
+      console.log(req.headers.authorization.split(" ")[1], "calling.....");
 
       try {
         token = req.headers.authorization.split(" ")[1];

@@ -103,6 +103,10 @@ export const forGotPasswordLinkSchema = joi.object({
     "string.email": "Email must be a valid email address",
     "any.required": "Email is a required field",
   }),
+  role: joi.string().required().messages({
+    "string.role": "Role must be a valid String",
+    "any.required": "Role is a required field",
+  }),
 });
 export const resetPasswordSchema = joi.object({
   resetId: joi.string().required().messages({

@@ -364,8 +364,8 @@ const updateUser = async (
   };
 };
 
-const forgotPassword = async (email: string): Promise<any> => {
-  const user = await User.findOne({ email, isDeleted: false });
+const forgotPassword = async ({ email, role }: any): Promise<any> => {
+  const user = await User.findOne({ email, role, isDeleted: false });
 
   if (user == null) {
     return await generateAPIError(errorMessages.userNotFound, 400);

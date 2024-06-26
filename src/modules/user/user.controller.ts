@@ -136,7 +136,7 @@ const updateUserByAdmin = errorWrapper(
 
 const forgotPassword = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await userService.forgotPassword(req.body.email);
+    const data = await userService.forgotPassword(req?.body);
 
     return responseUtils.success(res, {
       data,

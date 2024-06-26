@@ -6,10 +6,7 @@ import { userService } from "./user.service.js";
 import { UserRole, UserStatus } from "./user.enum.js";
 import { RequestWithUser } from "../../interface/app.interface.js";
 import { getPaginationOptions } from "../../utils/pagination.utils.js";
-// import { FilterQuery } from 'mongoose'
-// import User from './user.model.js'
-// import { ObjectId } from '../../constants/type.js'
-// import { getPaginationOptions } from '../../utils/pagination.utils.js'
+import { ObjectId } from "../../constants/type.js";
 
 const userSignUp = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -82,7 +79,6 @@ const adminSignIn = errorWrapper(
 
 const updateUser = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    console.log(req.body, "dtaaaa");
     const data = await userService.updateUser(req?.user?._id as string, {
       ...req.body,
       role: UserRole.USER,
@@ -97,7 +93,6 @@ const updateUser = errorWrapper(
 
 const followUnfollowUser = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    console.log(req.body, "dtaaaa");
     const data = await userService.updateUser(req?.user?._id as string, {
       ...req.body,
       role: req?.user?.role,
@@ -111,7 +106,6 @@ const followUnfollowUser = errorWrapper(
 );
 const updateAuthor = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    console.log(req.body, "dtaaaa");
     const data = await userService.updateUser(req?.user?._id as string, {
       ...req.body,
       role: UserRole.AUTHOR,
@@ -158,16 +152,11 @@ const updatePassword = errorWrapper(
 
 const findUserById = errorWrapper(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    // const isFollowing = req.query?.isFollowing;
-    // const isFollowers = req.query?.isFollowers;
-
     const data = await userService.findUserById({
       userId: req.user?._id as string,
       isFollowing: true,
       isFollowers: true,
     });
-
-    console.log(data, "apple");
 
     return responseUtils.success(res, {
       data,
@@ -187,6 +176,7 @@ const getAllUsers = errorWrapper(
         isDeleted: false,
         role: { $ne: UserRole.ADMIN },
         status: UserStatus.ACTIVE,
+        _id: { $ne: new ObjectId(req?.user?._id) },
       },
       options: {
         sort: { createdBy: -1 },
@@ -194,7 +184,6 @@ const getAllUsers = errorWrapper(
       },
       userId: req?.user?._id,
     });
-    console.log(data, "apple");
 
     return responseUtils.success(res, {
       data,

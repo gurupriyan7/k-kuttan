@@ -327,6 +327,17 @@ const getAllPosts = async ({
       },
     },
     {
+      $addFields: {
+        comments: {
+          $map: {
+            input: { $reverseArray: "$comments" }, // Reverse the array to get latest comments first
+            as: "comment",
+            in: "$$comment",
+          },
+        },
+      },
+    },
+    {
       $lookup: {
         from: "payment_transactions",
         let: { userId, postId: "$_id" },

@@ -7,6 +7,8 @@ import { UserRole, UserStatus } from "./user.enum.js";
 import { RequestWithUser } from "../../interface/app.interface.js";
 import { getPaginationOptions } from "../../utils/pagination.utils.js";
 import { ObjectId } from "../../constants/type.js";
+import { FilterQuery } from "mongoose";
+import User from "./user.model.js";
 
 const userSignUp = errorWrapper(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -191,6 +193,45 @@ const getAllUsers = errorWrapper(
     });
   },
 );
+const findAvailableUsersForChat = errorWrapper(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    let filterQuery: FilterQuery<typeof User> = {
+      isDeleted: false,
+      status: UserStatus.ACTIVE,
+    };
+    const searchTerm = req.query?.searchTerm;
+    if (searchTerm) {
+      filterQuery = {
+        ...filterQuery,
+        $or: [
+          {
+            firstName: {
+              $regex: new RegExp(String(searchTerm)),
+              $options: "i",
+            },
+          },
+          {
+            lastName: { $regex: new RegExp(String(searchTerm)), $options: "i" },
+          },
+        ],
+      };
+    }
+
+    const data = await userService.findAvailableUsersForChat({
+      query: {
+        isDeleted: false,
+        status: UserStatus.ACTIVE,
+        _id: new ObjectId(req?.user?._id),
+      },
+      filterQuery,
+    });
+
+    return responseUtils.success(res, {
+      data,
+      status: 200,
+    });
+  },
+);
 
 export {
   userSignUp,
@@ -206,4 +247,5 @@ export {
   updateAuthor,
   followUnfollowUser,
   getAllUsers,
+  findAvailableUsersForChat,
 };

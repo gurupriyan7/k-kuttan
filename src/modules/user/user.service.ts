@@ -518,6 +518,59 @@ const getAllUsers = async ({ query, options, userId }: any): Promise<any> => {
   };
 };
 
+const findAvailableUsersForChat = async ({
+  query,
+  filterQuery,
+}: any): Promise<any> => {
+  const data = await User.aggregate([
+    // Match the user by _id
+    {
+      $match: query,
+    },
+    // Project the fields to merge followers and followings
+    {
+      $project: {
+        commonArray: {
+          $setUnion: ["$followers", "$followings"],
+        },
+      },
+    },
+    // Lookup user data for these userIds
+    {
+      $lookup: {
+        from: "users",
+        localField: "commonArray",
+        foreignField: "_id",
+        as: "userData",
+        pipeline: [
+          {
+            $match: filterQuery,
+          },
+          {
+            $project: {
+              profileImage: 1,
+              firstName: 1,
+              lastName: 1,
+              _id: 1,
+            },
+          },
+        ],
+      },
+    },
+    // Project to format the result as desired
+    {
+      $project: {
+        _id: 0,
+        userData: 1,
+      },
+    },
+  ]);
+
+  console.log(data);
+
+  return data;
+};
+
 export const userService = {
   userSignUp,
   userSignIn,
@@ -528,4 +581,5 @@ export const userService = {
   updateUserByAdmin,
   findUserById,
   getAllUsers,
+  findAvailableUsersForChat,
 };

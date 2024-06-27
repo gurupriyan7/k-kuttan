@@ -568,7 +568,7 @@ const findAvailableUsersForChat = async ({
 
   console.log(data);
 
-  return data;
+  return data[0]?.userData;
 };
 
 export const userService = {

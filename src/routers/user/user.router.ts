@@ -50,7 +50,11 @@ router.post("/admin/login", JoiValidator(loginSchema), adminSignIn);
 router.post("/author", JoiValidator(signupSchema), authorSignUp);
 router.post("/author/login", JoiValidator(loginSchema), authorSignIn);
 router.patch("/", protect([UserRole.ADMIN, UserRole.USER]), updateUser);
-router.patch("/author", protect([UserRole.ADMIN, UserRole.USER]), updateAuthor);
+router.patch(
+  "/author",
+  protect([UserRole.ADMIN, UserRole.AUTHOR]),
+  updateAuthor,
+);
 router.patch("/admin/:id", protect([UserRole.ADMIN]), updateUser);
 router.patch(
   "/:id",

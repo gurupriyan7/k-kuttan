@@ -13,7 +13,8 @@
     "lint:fix": "eslint --ext .tsx,.ts . --fix",
     "lint:check": "eslint --ext .tsx,.ts .",
     "format:check": "prettier . --ignore-path .gitignore --check",
-    "format:fix": "prettier . --ignore-path .gitignore --write"
+    "format:fix": "prettier . --ignore-path .gitignore --write",
+    "dev-tsx": "tsx watch --clear-screen=false src/index.ts"
   },
   "lint-staged": {
     "*.ts": [
@@ -81,6 +82,7 @@
     "nodemon": "^3.0.1",
     "prettier": "3.0.3",
     "ts-node": "^10.9.2",
+    "tsx": "^4.16.0",
     "typescript": "^5.3.3"
   },
   "rootDir": "src"

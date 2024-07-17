@@ -1,0 +1,62 @@
+name: Build and Deploy testing to EC2
+
+on:
+    workflow_dispatch:
+
+    # push:
+    #     branches:
+    #         - main
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Install npm dependencies
+              run: |
+                  npm ci
+
+            - name: Build typescript
+              run: |
+                  npm run build
+
+            - name: Set up SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.TESTING_KEY }}
+
+            - name: Backup existing code
+              id: backup
+              run: |
+                  ssh-keyscan -t rsa ${{ secrets.TESTING_HOST }} >> $HOME/.ssh/known_hosts
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'mv /home/ubuntu/k-kuttan-backend /home/ubuntu/k-kuttan-backend-backup; mkdir /home/ubuntu/k-kuttan-backend'
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'cp /home/ubuntu/env/k-kuttan.env /home/ubuntu/k-kuttan-backend/.env'
+
+            - name: Deploy new code
+              run: |
+                  scp -r ./dist ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }}:/home/ubuntu/k-kuttan-backend
+                  scp -r ./package.json ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }}:/home/ubuntu/k-kuttan-backend
+                  scp -r ./package-lock.json ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }}:/home/ubuntu/k-kuttan-backend
+                  scp -r ./pm2.config.cjs ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }}:/home/ubuntu/k-kuttan-backend
+
+            - name: Install npm dependencies in EC2
+              run: |
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'cd /home/ubuntu/k-kuttan-backend && npm ci --omit=dev'
+
+            - name: Start/Restart PM2 process
+              run: |
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'cd /home/ubuntu/k-kuttan-backend && pm2 startOrRestart pm2.config.cjs'
+              # pm2 startOrRestart ecosystem.config.js
+
+            - name: Rollback on failure
+              run: |
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'mv /home/ubuntu/k-kuttan-backend-backup /home/ubuntu/k-kuttan-backend'
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'cd /home/ubuntu/k-kuttan-backend && pm2 startOrRestart pm2.config.cjs'
+              if: ${{ failure() && steps.backup.conclusion == 'success' }}
+
+            - name: Cleanup backup on success or failure
+              run: |
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'rm -rf /home/ubuntu/k-kuttan-backend-backup'
+              if: ${{ success() }}

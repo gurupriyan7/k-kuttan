@@ -1,0 +1,23 @@
+name: Restart pm2 runtime in EC2
+
+on:
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up SSH
+              uses: webfactory/ssh-agent@v0.5.3
+              with:
+                  ssh-private-key: ${{ secrets.TESTING_KEY }}
+
+            - name: Start/Restart PM2 process
+              run: |
+                  ssh-keyscan -t rsa ${{ secrets.TESTING_HOST }} >> $HOME/.ssh/known_hosts
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'cp /home/ubuntu/env/k-kuttan.env /home/ubuntu/k-kuttan-backend/.env'
+                  ssh ${{ secrets.TESTING_USER }}@${{ secrets.TESTING_HOST }} 'cd /home/ubuntu/k-kuttan-backend && pm2 startOrRestart pm2.config.cjs'
+              # pm2 startOrRestart ecosystem.config.js
